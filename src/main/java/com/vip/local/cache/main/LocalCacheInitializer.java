@@ -2,8 +2,11 @@ package com.vip.local.cache.main;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.vip.local.cache.cmd.LocalCacheCommandMgr;
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.init.LocalCacheServerInitializer;
+import com.vip.local.cache.sdk.inf.LocalCacheCallback;
+import com.vip.local.cache.worker.LocalCacheCommandWorker;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -14,6 +17,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 public class LocalCacheInitializer {
 	
 	private static LocalCacheInitializer instance = null;
+
 	
 	private EventLoopGroup bossGroup = new NioEventLoopGroup();
 	private EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -26,10 +30,14 @@ public class LocalCacheInitializer {
 		return instance;
 	}
 	
-	public void initialize(String port) throws NumberFormatException, InterruptedException {
+	public void initialize(String port , LocalCacheCallback callback) throws NumberFormatException, InterruptedException {
 		if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
 			port = LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition();
 		}
+		
+		LocalCacheCommandWorker.getInstance().start();
+		
+		LocalCacheCommandMgr.getInstance().initialize(callback);
 		
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workerGroup);
