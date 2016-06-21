@@ -1,7 +1,11 @@
 package com.vip.local.cache.sdk.inf;
 
+import java.util.List;
+
 import com.vip.local.cache.data.LocalCacheData;
 import com.vip.local.cache.main.LocalCacheInitializer;
+import com.vip.local.cache.util.LocalCachePeerUtil;
+import com.vip.local.cache.util.LocalCacheUtil;
 
 public class LocalCacheSdk {
 	private static LocalCacheSdk instance = null;
@@ -22,7 +26,18 @@ public class LocalCacheSdk {
 		return LocalCacheData.getInstance().get(key);
 	}
 	
-	public void flushCache(){
+	public boolean flushCache(){
+		String hosts = System.getenv("VIP_LOCAL_CACHE_HOST_SET");
 		
+		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
+		
+		boolean ret = true;
+		for (String host : params) {
+			if (!LocalCachePeerUtil.replicate(host)){
+				ret = false;
+			}
+		}
+		
+		return ret;
 	}
 }
