@@ -26,14 +26,14 @@ public class LocalCacheSdk {
 		return LocalCacheData.getInstance().get(key);
 	}
 	
-	public boolean flushCache(){
+	public boolean flushCache() throws NumberFormatException, Exception{
 		String hosts = System.getenv("VIP_LOCAL_CACHE_HOST_SET");
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate(host)){
+			if (!LocalCachePeerUtil.replicate4Flush(host)){
 				ret = false;
 			}
 		}

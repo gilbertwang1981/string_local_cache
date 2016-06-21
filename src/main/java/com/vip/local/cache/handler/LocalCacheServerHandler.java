@@ -24,9 +24,6 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 		}
 	}
 	
-	public LocalCacheServerHandler() {
-	}
-	
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.writeAndFlush("Welcome to " + InetAddress.getLocalHost().getHostName() + " service!\n");

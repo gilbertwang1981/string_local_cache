@@ -35,6 +35,9 @@ public class LocalCacheInitializer {
 			port = LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition();
 		}
 		
+		LocalCacheClientInitializer.getInstance().initialize();
+		LocalCacheClientInitializer.getInstance().start();
+		
 		LocalCacheCommandWorker.getInstance().start();
 		
 		LocalCacheCommandMgr.getInstance().initialize(callback);
