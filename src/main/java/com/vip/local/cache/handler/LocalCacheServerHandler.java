@@ -1,9 +1,9 @@
 package com.vip.local.cache.handler;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.List;
 
-import com.vip.local.cache.data.LocalCacheData;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.param.LocalCacheParameter;
 import com.vip.local.cache.util.CommandCoder;
@@ -24,12 +24,25 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 			LocalCacheCommandWorker.getInstance().addCommand(command);
 			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
 		} else if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand())) {			
+			LocalCacheParameter command = new LocalCacheParameter();
+			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
 			List<String> params = LocalCacheUtil.tokenizer(msg , null);
-			LocalCacheData.getInstance().set(params.get(1) , params.get(2));
+			HashMap<String , String> values = new HashMap<String , String>();
+			values.put("cache_key", params.get(1));
+			values.put("cache_value" , params.get(2));
+			command.setParams(values);
+			LocalCacheCommandWorker.getInstance().addCommand(command);
+
 			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
 		} else if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand())) {
+			LocalCacheParameter command = new LocalCacheParameter();
+			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
 			List<String> params = LocalCacheUtil.tokenizer(msg , null);
-			LocalCacheData.getInstance().del(params.get(1));
+			HashMap<String , String> values = new HashMap<String , String>();
+			values.put("cache_key", params.get(1));
+			command.setParams(values);
+			LocalCacheCommandWorker.getInstance().addCommand(command);
+
 			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
 		} else {
 			ctx.writeAndFlush(CommandCoder.encodeCommand(false , "invalid command"));
