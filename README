@@ -1,4 +1,10 @@
-there is a sample for local cache usage.
+There is a sample for the distributed local cache usage.
+
+1. set the env variables for the cluster.
+
+export LOCAL_CACHE_HOST_SET=127.0.0.1;192.168.21.11
+
+2. coding as following.
 
 import java.util.HashMap;
 import java.util.Map;
