@@ -27,7 +27,7 @@ public class LocalCacheSdk {
 	}
 	
 	public boolean flushCache() throws NumberFormatException, Exception{
-		String hosts = System.getenv("VIP_LOCAL_CACHE_HOST_SET");
+		String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
