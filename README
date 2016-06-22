@@ -25,12 +25,6 @@ class SampleLocalCacheCallback implements LocalCacheCallback {
 		
 		return ret;
 	}
-
-	public void onSet(LocalCacheParameter param) {
-	}
-
-	public void onDel(LocalCacheParameter param) {
-	}
 }
 
 class MyThreadData extends Thread{
