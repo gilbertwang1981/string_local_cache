@@ -8,4 +8,12 @@ public class LocalCachePeerUtil {
 		return LocalCacheClientInitializer.getInstance().replicate(host , 
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCommand() + "\n");
 	}
+	
+	public static boolean replicate4Del(String host , String key) {
+		return true;
+	}
+	
+	public static boolean replicate4Set(String host , String key , String value) {
+		return true;
+	}
 }

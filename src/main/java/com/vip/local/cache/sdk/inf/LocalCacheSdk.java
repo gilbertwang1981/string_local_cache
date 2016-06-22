@@ -1,11 +1,12 @@
 package com.vip.local.cache.sdk.inf;
 
-import java.util.List;
+import java.util.HashMap;
 
 import com.vip.local.cache.data.LocalCacheData;
+import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheInitializer;
-import com.vip.local.cache.util.LocalCachePeerUtil;
-import com.vip.local.cache.util.LocalCacheUtil;
+import com.vip.local.cache.param.LocalCacheParameter;
+import com.vip.local.cache.worker.LocalCacheReplicaWorker;
 
 public class LocalCacheSdk {
 	private static LocalCacheSdk instance = null;
@@ -26,18 +27,33 @@ public class LocalCacheSdk {
 		return LocalCacheData.getInstance().get(key);
 	}
 	
-	public boolean flushCache() throws NumberFormatException, Exception{
-		String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+	public void set(String key , String value) {
+		LocalCacheParameter param = new LocalCacheParameter();
 		
-		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
+		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
+		HashMap<String , String> data = new HashMap<String , String>();
+		data.put("cache_key", key);
+		data.put("cache_value", value);
+		param.setParams(data);
 		
-		boolean ret = true;
-		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Flush(host)){
-				ret = false;
-			}
-		}
+		LocalCacheReplicaWorker.getInstance().addCommand(param);
+	}
+	
+	public void del(String key) {
+		LocalCacheParameter param = new LocalCacheParameter();
 		
-		return ret;
+		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
+		HashMap<String , String> data = new HashMap<String , String>();
+		data.put("cache_key", key);
+		param.setParams(data);
+		
+		LocalCacheReplicaWorker.getInstance().addCommand(param);
+	}
+	
+	public void flush() throws NumberFormatException, Exception{
+		LocalCacheParameter param = new LocalCacheParameter();
+		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+		
+		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 }

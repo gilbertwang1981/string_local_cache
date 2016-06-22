@@ -7,6 +7,7 @@ import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.init.LocalCacheServerInitializer;
 import com.vip.local.cache.sdk.inf.LocalCacheCallback;
 import com.vip.local.cache.worker.LocalCacheCommandWorker;
+import com.vip.local.cache.worker.LocalCacheReplicaWorker;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -41,6 +42,8 @@ public class LocalCacheInitializer {
 		LocalCacheCommandWorker.getInstance().start();
 		
 		LocalCacheCommandMgr.getInstance().initialize(callback);
+		
+		LocalCacheReplicaWorker.getInstance().start();
 		
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(bossGroup, workerGroup);

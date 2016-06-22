@@ -25,6 +25,35 @@ public class LocalCacheData {
 		readwritelock.writeLock().unlock();
 	}
 	
+	public void del(String key) {
+		readwritelock.writeLock().lock();
+		if (this.cache == null) {
+			readwritelock.writeLock().unlock();
+			return;
+		}
+		
+		cache.remove(key);
+		
+		readwritelock.writeLock().unlock();
+	}
+	
+	public void set(String key , String value) {
+		readwritelock.writeLock().lock();
+		if (this.cache == null) {
+			readwritelock.writeLock().unlock();
+			return;
+		}
+		
+		String k = cache.get(key);
+		if (k == null) {
+			cache.put(key , value);
+		} else {
+			cache.replace(key, value);
+		}
+		
+		readwritelock.writeLock().unlock();
+	}
+	
 	public String get(String key) {
 		readwritelock.readLock().lock();
 		if (this.cache == null) {

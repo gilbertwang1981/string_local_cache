@@ -20,6 +20,10 @@ public class CommandCoder {
 		String cmd = params.get(0);
 		if (cmd.equalsIgnoreCase(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCommand())) {
 			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH;
+		} else if (cmd.equalsIgnoreCase(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand())) {
+			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET;
+		} else if (cmd.equalsIgnoreCase(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand())) {
+			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL;
 		}
 		
 		return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_INV;
