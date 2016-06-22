@@ -1,9 +1,12 @@
 package com.vip.local.cache.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.handler.LocalCachePeerHandler;
+import com.vip.local.cache.util.LocalCacheUtil;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -24,6 +27,10 @@ public class LocalCacheClientInitializer extends Thread{
 	
 	private ConcurrentHashMap<String , Channel> channels = 
 			new ConcurrentHashMap<String , Channel>();
+	
+	private List<String> channelKeys = new ArrayList<String>();
+	
+	private List<String> retryConnects = new ArrayList<String>();
 	
 	public static LocalCacheClientInitializer getInstance(){
 		if (instance == null) {
@@ -62,33 +69,55 @@ public class LocalCacheClientInitializer extends Thread{
 			}
 			
 			channels.put(host + ":" + port , channel);
+			channelKeys.add(host + ":" + port);
 		}
 		
 		return channel;
 	}
 	
-	public boolean sendMsg(String host , int port , String msg) throws Exception {
-		Channel channel = this.getChannel(host, port);
-		if(channel != null) {
-			channel.writeAndFlush(msg).sync();
-			
-			return true;
-		}else{
-			return false;
+	public boolean broadcast(String msg) {
+		boolean ret = true;
+		for (String key : channelKeys) {
+			List<String> address = LocalCacheUtil.tokenizer(key , ":");
+			Channel channel = this.getChannel(address.get(0) , new Integer(address.get(1)));
+			if(channel != null) {
+				try {
+					channel.writeAndFlush(msg).sync();
+				} catch (Exception e) {
+					retryConnects.add(key);
+					channelKeys.remove(key);
+					channels.remove(key);
+					
+					ret = false;
+				}
+			}else{
+				ret = false;
+			}
 		}
+		return ret;
 	}
 	
 	public void run(){
 		while (true) {
 			try {
-				Thread.sleep(
-					new Integer(
-					LocalCacheConst.LOCAL_CACHE_HC_TMO.getDefinition()));
-			} catch (NumberFormatException e) {
+				Thread.sleep(new Integer(
+						LocalCacheConst.LOCAL_CACHE_HC_TMO.getDefinition()));
+				
+				for (String retry : retryConnects) {
+					List<String> address = LocalCacheUtil.tokenizer(retry , ":");
+					Channel channel = this.getChannel(
+							address.get(0) , new Integer(address.get(1)));
+					if (channel != null) {
+						retryConnects.remove(retry);
+						channelKeys.add(retry);
+						channels.put(retry , channel);
+						
+						break;
+					}
+				}
+			}catch (Exception e) {
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			} 
 		}
 	}
 }
