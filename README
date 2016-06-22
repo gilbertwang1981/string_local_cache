@@ -1,0 +1,67 @@
+there is a sample for local cache usage.
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.vip.local.cache.param.LocalCacheParameter;
+import com.vip.local.cache.sdk.inf.LocalCacheCallback;
+import com.vip.local.cache.sdk.inf.LocalCacheSdk;
+
+class SampleLocalCacheCallback implements LocalCacheCallback {
+
+	// you need to implement the logic for flush command.
+	public Map<String , String> onFlush(LocalCacheParameter param) {
+		System.out.println("onFlush ");
+		
+		HashMap<String , String> ret = new HashMap<String , String>();
+		
+		ret.put("key", new Long(System.currentTimeMillis()).toString());
+		
+		return ret;
+	}
+
+	public void onSet(LocalCacheParameter param) {
+	}
+
+	public void onDel(LocalCacheParameter param) {
+	}
+}
+
+class MyThreadData extends Thread{
+	public void run(){
+		while (true) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			// get the data from the local cache.
+			System.out.println(LocalCacheSdk.getInstance().get("key"));
+		}
+	}
+}
+
+class MyThreadFlush extends Thread {
+	public void run(){
+		while (true) {
+			try {
+				Thread.sleep(5000);
+				// flush local cache
+				LocalCacheSdk.getInstance().flushCache();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+public class LocalCacheTest {
+	public static void main(String [] args) throws NumberFormatException, InterruptedException {
+		new MyThreadData().start();
+		new MyThreadFlush().start();
+		
+		// you need to initialize the cache when your service has been started once.
+		LocalCacheSdk.getInstance().initialize(new SampleLocalCacheCallback());
+	}
+}
