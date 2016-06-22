@@ -75,26 +75,24 @@ public class LocalCacheClientInitializer extends Thread{
 		return channel;
 	}
 	
-	public boolean broadcast(String msg) {
-		boolean ret = true;
-		for (String key : channelKeys) {
-			List<String> address = LocalCacheUtil.tokenizer(key , ":");
-			Channel channel = this.getChannel(address.get(0) , new Integer(address.get(1)));
-			if(channel != null) {
-				try {
-					channel.writeAndFlush(msg).sync();
-				} catch (Exception e) {
-					retryConnects.add(key);
-					channelKeys.remove(key);
-					channels.remove(key);
-					
-					ret = false;
-				}
-			}else{
-				ret = false;
+	public boolean replicate(String host , String msg) {
+		Channel channel = this.getChannel(host , new Integer(
+				LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition()));
+		if(channel != null) {
+			try {
+				channel.writeAndFlush(msg).sync();
+			} catch (Exception e) {
+				retryConnects.add(host + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
+				channelKeys.remove(host + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
+				channels.remove(host + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
+				
+				return false;
 			}
+		}else{
+			return true;
 		}
-		return ret;
+		
+		return false;
 	}
 	
 	public void run(){

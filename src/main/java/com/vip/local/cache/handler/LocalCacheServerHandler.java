@@ -14,7 +14,8 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
 		LocalCacheCmdType type = CommandCoder.decodeCommand(msg);
-		if (type.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()) {
+		
+		if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCommand())) {
 			LocalCacheParameter command = new LocalCacheParameter();
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 			LocalCacheCommandWorker.getInstance().addCommand(command);

@@ -5,7 +5,6 @@ public enum LocalCacheConst {
 	LOCAL_CACHE_MAX_FRAME_SIZE("102400" , "最大针大小"),
 	LOCAL_CACHE_CMD_QUEUE_SIZE("819200" , "命令队列大小"),
 	LOCAL_CACHE_CMD_QUEUE_TMO("500" , "命令队列超时"),
-	LOCAL_CACHE_PEER_PORT("40010" , "复制端口"),
 	LOCAL_CACHE_HC_TMO("1000" , "健康检查超时时间");
 	
 	private String definition;
