@@ -10,10 +10,13 @@ public class LocalCachePeerUtil {
 	}
 	
 	public static boolean replicate4Del(String host , String key) {
-		return true;
+		return LocalCacheClientInitializer.getInstance().replicate(host , 
+				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand() + " " + key + "\n");
 	}
 	
 	public static boolean replicate4Set(String host , String key , String value) {
-		return true;
+		return LocalCacheClientInitializer.getInstance().replicate(host , 
+				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand() + " " + key + " " + 
+				value + "\n");
 	}
 }

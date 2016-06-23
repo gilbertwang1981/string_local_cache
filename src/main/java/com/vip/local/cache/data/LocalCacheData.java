@@ -1,11 +1,12 @@
 package com.vip.local.cache.data;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LocalCacheData {
-	private Map<String , String> cache = null;
+	private Map<String , String> cache = new HashMap<String , String>();
 	
 	private static LocalCacheData instance = null;
 	
@@ -44,12 +45,7 @@ public class LocalCacheData {
 			return;
 		}
 		
-		String k = cache.get(key);
-		if (k == null) {
-			cache.put(key , value);
-		} else {
-			cache.replace(key, value);
-		}
+		cache.put(key , value);
 		
 		readwritelock.writeLock().unlock();
 	}

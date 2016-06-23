@@ -42,7 +42,7 @@ public class LocalCacheSdk {
 	public void del(String key) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
-		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
+		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
 		HashMap<String , String> data = new HashMap<String , String>();
 		data.put("cache_key", key);
 		param.setParams(data);

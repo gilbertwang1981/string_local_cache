@@ -14,6 +14,8 @@ import com.vip.local.cache.util.LocalCacheUtil;
 public class LocalCacheReplicaWorker extends Thread{
 	private static LocalCacheReplicaWorker instance = null;
 	
+	private String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+	
 	private BlockingQueue<LocalCacheParameter> queue = new ArrayBlockingQueue<LocalCacheParameter>(
 			new Integer(LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_SIZE.getDefinition()));
 	
@@ -30,7 +32,9 @@ public class LocalCacheReplicaWorker extends Thread{
 	}
 	
 	public boolean flushCache() throws NumberFormatException, Exception{
-		String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+		if (hosts == null) {
+			return false;
+		}
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
@@ -45,7 +49,9 @@ public class LocalCacheReplicaWorker extends Thread{
 	}
 	
 	public boolean delCache(String key) {
-		String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+		if (hosts == null) {
+			return false;
+		}
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
@@ -60,7 +66,9 @@ public class LocalCacheReplicaWorker extends Thread{
 	}
 	
 	public boolean setCache(String key , String value) {
-		String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+		if (hosts == null) {
+			return false;
+		}
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
@@ -87,9 +95,9 @@ public class LocalCacheReplicaWorker extends Thread{
 				
 				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()){
 					this.flushCache();
-				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
-					this.delCache(value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
+					this.delCache(value.getParams().get("cache_key"));
+				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
 					this.setCache(value.getParams().get("cache_key") , 
 							value.getParams().get("cache_value"));
 				}
