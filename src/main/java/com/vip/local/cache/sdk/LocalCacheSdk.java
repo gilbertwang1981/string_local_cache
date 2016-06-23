@@ -1,4 +1,4 @@
-package com.vip.local.cache.sdk.inf;
+package com.vip.local.cache.sdk;
 
 import java.util.HashMap;
 

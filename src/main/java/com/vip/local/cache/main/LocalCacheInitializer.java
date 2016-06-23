@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.vip.local.cache.cmd.LocalCacheCommandMgr;
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.init.LocalCacheServerInitializer;
-import com.vip.local.cache.sdk.inf.LocalCacheCallback;
+import com.vip.local.cache.sdk.LocalCacheCallback;
 import com.vip.local.cache.worker.LocalCacheCommandWorker;
 import com.vip.local.cache.worker.LocalCacheReplicaWorker;
 

@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.param.LocalCacheParameter;
-import com.vip.local.cache.sdk.inf.LocalCacheCallback;
+import com.vip.local.cache.sdk.LocalCacheCallback;
 
 public class LocalCacheCommandMgr {
 	private static LocalCacheCommandMgr instance = null;

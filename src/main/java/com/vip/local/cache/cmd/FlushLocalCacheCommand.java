@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.vip.local.cache.data.LocalCacheData;
 import com.vip.local.cache.param.LocalCacheParameter;
-import com.vip.local.cache.sdk.inf.LocalCacheCallback;
+import com.vip.local.cache.sdk.LocalCacheCallback;
 
 public class FlushLocalCacheCommand implements LocalCacheCommand{
 	
