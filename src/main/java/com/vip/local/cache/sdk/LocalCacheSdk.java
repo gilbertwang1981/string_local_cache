@@ -19,8 +19,8 @@ public class LocalCacheSdk {
 		return instance;
 	}
 	
-	public void initialize(LocalCacheCallback callback) throws NumberFormatException, InterruptedException{
-		LocalCacheInitializer.getInstance().initialize(null , callback);
+	public void initialize(LocalCacheCallback callback , String hosts) throws NumberFormatException, InterruptedException{
+		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
 	public String get(String key) {

@@ -11,10 +11,10 @@ import com.vip.local.cache.param.LocalCacheParameter;
 import com.vip.local.cache.util.LocalCachePeerUtil;
 import com.vip.local.cache.util.LocalCacheUtil;
 
-public class LocalCacheReplicaWorker extends Thread{
+public final class LocalCacheReplicaWorker extends Thread{
 	private static LocalCacheReplicaWorker instance = null;
 	
-	private String hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+	private String hosts = null;
 	
 	private BlockingQueue<LocalCacheParameter> queue = new ArrayBlockingQueue<LocalCacheParameter>(
 			new Integer(LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_SIZE.getDefinition()));
@@ -25,6 +25,14 @@ public class LocalCacheReplicaWorker extends Thread{
 		}
 		
 		return instance;
+	}
+	
+	private LocalCacheReplicaWorker(){
+		this.hosts = System.getenv("LOCAL_CACHE_HOST_SET");
+	}
+	
+	public void setHosts(String hosts) {
+		this.hosts = hosts;
 	}
 	
 	public void addCommand(LocalCacheParameter command) {
