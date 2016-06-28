@@ -1,5 +1,6 @@
 package com.vip.local.cache.sdk;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import com.vip.local.cache.data.LocalCacheData;
@@ -50,9 +51,17 @@ public class LocalCacheSdk {
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void flush() throws NumberFormatException, Exception{
+	public void flush(String parameter) throws NumberFormatException, Exception{
 		LocalCacheParameter param = new LocalCacheParameter();
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+		
+		HashMap<String , String> data = new HashMap<String , String>();
+		
+		data.put("cache_key" , "flush_parameter_key");
+		data.put("cache_value" , URLEncoder.encode(parameter , "UTF-8"));
+		param.setParams(data);
+		
+		param.setParams(data);
 		
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}

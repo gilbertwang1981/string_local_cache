@@ -1,5 +1,7 @@
 package com.vip.local.cache.cmd;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import com.vip.local.cache.data.LocalCacheData;
@@ -15,7 +17,15 @@ public class FlushLocalCacheCommand implements LocalCacheCommand{
 	}
 
 	public boolean execute(LocalCacheParameter paramter) {
-		Map<String , String> ret = callback.onFlush(paramter);
+		Map<String, String> ret = null;
+		try {
+			ret = callback.onFlush(
+					URLDecoder.decode(paramter.getParams().get("cache_value") , "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			
+			return false;
+		}
 		
 		if (ret == null) {
 			return false;

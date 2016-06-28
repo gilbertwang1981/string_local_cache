@@ -21,7 +21,14 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 		if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCommand())) {
 			LocalCacheParameter command = new LocalCacheParameter();
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+			
+			List<String> params = LocalCacheUtil.tokenizer(msg , null);
+			HashMap<String , String> values = new HashMap<String , String>();
+			values.put("cache_key", "flush_cache_key");
+			values.put("cache_value" , params.get(1));
+			command.setParams(values);
 			LocalCacheCommandWorker.getInstance().addCommand(command);
+			
 			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
 		} else if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand())) {			
 			LocalCacheParameter command = new LocalCacheParameter();

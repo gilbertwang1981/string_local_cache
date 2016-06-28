@@ -39,7 +39,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		queue.add(command);
 	}
 	
-	public boolean flushCache() throws NumberFormatException, Exception{
+	public boolean flushCache(String parameter) throws NumberFormatException, Exception{
 		if (hosts == null) {
 			return false;
 		}
@@ -48,7 +48,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Flush(host)){
+			if (!LocalCachePeerUtil.replicate4Flush(host , parameter)){
 				ret = false;
 			}
 		}
@@ -102,7 +102,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 				}
 				
 				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()){
-					this.flushCache();
+					this.flushCache(value.getParams().get("cache_value"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
 					this.delCache(value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
