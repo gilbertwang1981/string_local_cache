@@ -1,25 +1,40 @@
 There is a sample for the distributed local cache usage.
 
-1. set the env variables for the cluster.
+coding as following.
 
-export LOCAL_CACHE_HOST_SET=127.0.0.1;192.168.21.11
+package com.vip.local.cache.test;
 
-2. coding as following.
-
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vip.local.cache.param.LocalCacheParameter;
-import com.vip.local.cache.sdk.inf.LocalCacheCallback;
-import com.vip.local.cache.sdk.inf.LocalCacheSdk;
+import com.vip.local.cache.sdk.LocalCacheCallback;
+import com.vip.local.cache.sdk.LocalCacheSdk;
+
+class TestObject {
+	private String hostName;
+	private Long timestamp;
+	
+	public Long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
+	public String getHostName() {
+		return hostName;
+	}
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+}
 
 class SampleLocalCacheCallback implements LocalCacheCallback {
 
-	// you need to implement the logic for flush command.
-	public Map<String , String> onFlush(LocalCacheParameter param) {
-		System.out.println("onFlush ");
+	public Map<String, Object> onFlush(Object param) {
+		System.out.println("onFlush:" + param);
 		
-		HashMap<String , String> ret = new HashMap<String , String>();
+		HashMap<String , Object> ret = new HashMap<String , Object>();
 		
 		ret.put("key", new Long(System.currentTimeMillis()).toString());
 		
@@ -36,8 +51,49 @@ class MyThreadData extends Thread{
 				e.printStackTrace();
 			}
 			
-			// get the data from the local cache.
-			System.out.println(LocalCacheSdk.getInstance().get("key"));
+			System.out.println(LocalCacheSdk.getInstance().get("key" , String.class));
+		}
+	}
+}
+
+class MyThreadSetter extends Thread {
+	public void run() {
+		long counter = 0;
+		while (true) {
+			try {
+				Thread.sleep(1);
+				
+				TestObject obj = new TestObject();
+				obj.setHostName(InetAddress.getLocalHost().getHostName());
+				obj.setTimestamp(System.currentTimeMillis());
+				
+				if (counter ++ % 2 == 0) {
+					LocalCacheSdk.getInstance().set("host" ,  obj);
+				} else {
+					LocalCacheSdk.getInstance().del("host");
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+class MyThreadGetter extends Thread {
+	public void run(){
+		while (true) {
+			try {
+				Thread.sleep(2);
+				
+				TestObject obj = (TestObject)LocalCacheSdk.getInstance().get("host" , TestObject.class);
+				if (obj != null) {
+					System.out.println(obj.getHostName() + "-" + obj.getTimestamp());
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
@@ -47,8 +103,13 @@ class MyThreadFlush extends Thread {
 		while (true) {
 			try {
 				Thread.sleep(5000);
-				// flush local cache
-				LocalCacheSdk.getInstance().flushCache();
+				
+				StringBuffer param = new StringBuffer();
+				for (int i = 0;i < 5;i++) {
+					param.append("hello world " + i);
+				}
+				
+				LocalCacheSdk.getInstance().flush(param.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -60,8 +121,23 @@ public class LocalCacheTest {
 	public static void main(String [] args) throws NumberFormatException, InterruptedException {
 		new MyThreadData().start();
 		new MyThreadFlush().start();
+		MyThreadSetter setter = null;
+		MyThreadGetter getter = null;
 		
-		// you need to initialize the cache when your service has been started once.
-		LocalCacheSdk.getInstance().initialize(new SampleLocalCacheCallback());
+		String hosts = null;
+		
+		if (System.getProperty("hosts") != null) {
+			hosts = System.getProperty("hosts");
+		}
+		
+		if (System.getProperty("mode").equalsIgnoreCase("set")) {
+			setter = new MyThreadSetter();
+			setter.start();
+		} else {
+			getter = new MyThreadGetter();
+			getter.start();
+		}
+		
+		LocalCacheSdk.getInstance().initialize(new SampleLocalCacheCallback() , hosts);
 	}
 }
