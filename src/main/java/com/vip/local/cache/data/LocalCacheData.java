@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LocalCacheData {
-	private Map<String , String> cache = new HashMap<String , String>();
+	private Map<String , Object> cache = new HashMap<String , Object>();
 	
 	private static LocalCacheData instance = null;
 	
@@ -20,7 +20,7 @@ public class LocalCacheData {
 		return instance;
 	}
 	
-	public void switchCache(Map<String , String> cache) {
+	public void switchCache(Map<String , Object> cache) {
 		readwritelock.writeLock().lock();
 		this.cache = cache;
 		readwritelock.writeLock().unlock();
@@ -38,7 +38,7 @@ public class LocalCacheData {
 		readwritelock.writeLock().unlock();
 	}
 	
-	public void set(String key , String value) {
+	public void set(String key , Object value) {
 		readwritelock.writeLock().lock();
 		if (this.cache == null) {
 			readwritelock.writeLock().unlock();
@@ -50,14 +50,14 @@ public class LocalCacheData {
 		readwritelock.writeLock().unlock();
 	}
 	
-	public String get(String key) {
+	public Object get(String key) {
 		readwritelock.readLock().lock();
 		if (this.cache == null) {
 			readwritelock.readLock().unlock();
 			return null;
 		}
 		
-		String ret = this.cache.get(key);
+		Object ret = this.cache.get(key);
 		readwritelock.readLock().unlock();
 		
 		return ret;

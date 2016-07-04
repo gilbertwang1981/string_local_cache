@@ -3,6 +3,7 @@ package com.vip.local.cache.sdk;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
+import com.alibaba.fastjson.JSONObject;
 import com.vip.local.cache.data.LocalCacheData;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheInitializer;
@@ -24,15 +25,22 @@ public class LocalCacheSdk {
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
-	public String get(String key) {
-		return LocalCacheData.getInstance().get(key);
+	@SuppressWarnings("unchecked")
+	public Object get(String key , @SuppressWarnings("rawtypes") Class type) {
+		JSONObject obj = (JSONObject) LocalCacheData.getInstance().get(key);
+		
+		if (obj == null) {
+			return null;
+		}
+		
+		return obj.toJavaObject(type);
 	}
 	
-	public void set(String key , String value) {
+	public void set(String key , Object value) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
-		HashMap<String , String> data = new HashMap<String , String>();
+		HashMap<String , Object> data = new HashMap<String , Object>();
 		data.put("cache_key", key);
 		data.put("cache_value", value);
 		param.setParams(data);
@@ -44,7 +52,7 @@ public class LocalCacheSdk {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
-		HashMap<String , String> data = new HashMap<String , String>();
+		HashMap<String , Object> data = new HashMap<String , Object>();
 		data.put("cache_key", key);
 		param.setParams(data);
 		
@@ -55,7 +63,7 @@ public class LocalCacheSdk {
 		LocalCacheParameter param = new LocalCacheParameter();
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 		
-		HashMap<String , String> data = new HashMap<String , String>();
+		HashMap<String , Object> data = new HashMap<String , Object>();
 		
 		data.put("cache_key" , "flush_parameter_key");
 		data.put("cache_value" , URLEncoder.encode(parameter , "UTF-8"));

@@ -17,10 +17,10 @@ public class FlushLocalCacheCommand implements LocalCacheCommand{
 	}
 
 	public boolean execute(LocalCacheParameter paramter) {
-		Map<String, String> ret = null;
+		Map<String, Object> ret = null;
 		try {
 			ret = callback.onFlush(
-					URLDecoder.decode(paramter.getParams().get("cache_value") , "UTF-8"));
+					URLDecoder.decode((String)paramter.getParams().get("cache_value") , "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			

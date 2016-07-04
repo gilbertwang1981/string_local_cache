@@ -73,7 +73,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		return ret;
 	}
 	
-	public boolean setCache(String key , String value) {
+	public boolean setCache(String key , Object value) {
 		if (hosts == null) {
 			return false;
 		}
@@ -102,11 +102,11 @@ public final class LocalCacheReplicaWorker extends Thread{
 				}
 				
 				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()){
-					this.flushCache(value.getParams().get("cache_value"));
+					this.flushCache((String)value.getParams().get("cache_value"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
-					this.delCache(value.getParams().get("cache_key"));
+					this.delCache((String)value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
-					this.setCache(value.getParams().get("cache_key") , 
+					this.setCache((String)value.getParams().get("cache_key") , 
 							value.getParams().get("cache_value"));
 				}
 			} catch (Exception e) {

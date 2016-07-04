@@ -1,5 +1,6 @@
 package com.vip.local.cache.util;
 
+import com.alibaba.fastjson.JSON;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheClientInitializer;
 
@@ -15,9 +16,9 @@ public class LocalCachePeerUtil {
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand() + " " + key + "\n");
 	}
 	
-	public static boolean replicate4Set(String host , String key , String value) {
+	public static boolean replicate4Set(String host , String key , Object value) {
 		return LocalCacheClientInitializer.getInstance().replicate(host , 
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand() + " " + key + " " + 
-				value + "\n");
+				JSON.toJSONString(value) + "\n");
 	}
 }

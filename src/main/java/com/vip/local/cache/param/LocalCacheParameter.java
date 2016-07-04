@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class LocalCacheParameter {
 	private int code;
-	private HashMap<String , String> params = new HashMap<String , String>();
+	private HashMap<String , Object> params = new HashMap<String , Object>();
 	
 	public int getCode() {
 		return code;
@@ -12,10 +12,10 @@ public class LocalCacheParameter {
 	public void setCode(int code) {
 		this.code = code;
 	}
-	public HashMap<String , String> getParams() {
+	public HashMap<String , Object> getParams() {
 		return params;
 	}
-	public void setParams(HashMap<String , String> params) {
+	public void setParams(HashMap<String , Object> params) {
 		this.params = params;
 	}
 }

@@ -23,7 +23,7 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 			
 			List<String> params = LocalCacheUtil.tokenizer(msg , null);
-			HashMap<String , String> values = new HashMap<String , String>();
+			HashMap<String , Object> values = new HashMap<String , Object>();
 			values.put("cache_key", "flush_cache_key");
 			values.put("cache_value" , params.get(1));
 			command.setParams(values);
@@ -34,7 +34,7 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 			LocalCacheParameter command = new LocalCacheParameter();
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
 			List<String> params = LocalCacheUtil.tokenizer(msg , null);
-			HashMap<String , String> values = new HashMap<String , String>();
+			HashMap<String , Object> values = new HashMap<String , Object>();
 			values.put("cache_key", params.get(1));
 			values.put("cache_value" , params.get(2));
 			command.setParams(values);
@@ -45,7 +45,7 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 			LocalCacheParameter command = new LocalCacheParameter();
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
 			List<String> params = LocalCacheUtil.tokenizer(msg , null);
-			HashMap<String , String> values = new HashMap<String , String>();
+			HashMap<String , Object> values = new HashMap<String , Object>();
 			values.put("cache_key", params.get(1));
 			command.setParams(values);
 			LocalCacheCommandWorker.getInstance().addCommand(command);
