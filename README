@@ -68,7 +68,7 @@ class MyThreadSetter extends Thread {
 				obj.setTimestamp(System.currentTimeMillis());
 				
 				if (counter ++ % 2 == 0) {
-					LocalCacheSdk.getInstance().set("host" ,  obj);
+					LocalCacheSdk.getInstance().set("host" ,  obj , 1);
 				} else {
 					LocalCacheSdk.getInstance().del("host");
 				}
