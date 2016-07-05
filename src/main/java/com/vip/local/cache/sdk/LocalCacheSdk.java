@@ -51,7 +51,7 @@ public class LocalCacheSdk {
 			long expireTime = expire * 1000 + System.currentTimeMillis();
 			data.put("cache_expire" , new Long(expireTime));
 		} else {
-			data.put("cache_expire" , 0);
+			data.put("cache_expire" , new Long(0));
 		}
 		param.setParams(data);
 		
