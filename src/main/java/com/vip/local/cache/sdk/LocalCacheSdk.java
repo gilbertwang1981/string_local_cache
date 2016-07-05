@@ -36,13 +36,23 @@ public class LocalCacheSdk {
 		return obj.toJavaObject(type);
 	}
 	
-	public void set(String key , Object value) {
+	public void set(String key , Object value , Integer expire) {
 		LocalCacheParameter param = new LocalCacheParameter();
+		
+		if (expire == null) {
+			expire = new Integer(0);
+		}
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
 		HashMap<String , Object> data = new HashMap<String , Object>();
-		data.put("cache_key", key);
-		data.put("cache_value", value);
+		data.put("cache_key" , key);
+		data.put("cache_value" , value);
+		if (expire.intValue() != 0) {
+			long expireTime = expire * 1000 + System.currentTimeMillis();
+			data.put("cache_expire" , new Long(expireTime));
+		} else {
+			data.put("cache_expire" , 0);
+		}
 		param.setParams(data);
 		
 		LocalCacheReplicaWorker.getInstance().addCommand(param);

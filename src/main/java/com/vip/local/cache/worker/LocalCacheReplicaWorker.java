@@ -73,7 +73,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		return ret;
 	}
 	
-	public boolean setCache(String key , Object value) {
+	public boolean setCache(String key , Object value , Long expire) {
 		if (hosts == null) {
 			return false;
 		}
@@ -82,7 +82,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Set(host , key , value)){
+			if (!LocalCachePeerUtil.replicate4Set(host , key , value , expire)){
 				ret = false;
 			}
 		}
@@ -107,7 +107,8 @@ public final class LocalCacheReplicaWorker extends Thread{
 					this.delCache((String)value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
 					this.setCache((String)value.getParams().get("cache_key") , 
-							value.getParams().get("cache_value"));
+							value.getParams().get("cache_value") , 
+							(Long)value.getParams().get("cache_expire"));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

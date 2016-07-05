@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.vip.local.cache.cmd.LocalCacheCommandMgr;
 import com.vip.local.cache.define.LocalCacheConst;
+import com.vip.local.cache.expire.LocalCacheExpirer;
 import com.vip.local.cache.init.LocalCacheServerInitializer;
 import com.vip.local.cache.sdk.LocalCacheCallback;
 import com.vip.local.cache.worker.LocalCacheCommandWorker;
@@ -41,6 +42,7 @@ public class LocalCacheInitializer {
 		LocalCacheClientInitializer.getInstance().start();
 		
 		LocalCacheCommandWorker.getInstance().start();
+		LocalCacheExpirer.getInstance().start();
 		
 		LocalCacheCommandMgr.getInstance().initialize(callback);
 

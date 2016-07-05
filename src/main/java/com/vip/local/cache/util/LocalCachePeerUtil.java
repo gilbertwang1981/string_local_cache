@@ -16,9 +16,9 @@ public class LocalCachePeerUtil {
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand() + " " + key + "\n");
 	}
 	
-	public static boolean replicate4Set(String host , String key , Object value) {
+	public static boolean replicate4Set(String host , String key , Object value , Long expire) {
 		return LocalCacheClientInitializer.getInstance().replicate(host , 
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand() + " " + key + " " + 
-				JSON.toJSONString(value) + "\n");
+				JSON.toJSONString(value) + " " + expire + "\n");
 	}
 }
