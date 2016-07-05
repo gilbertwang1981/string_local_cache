@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LocalCacheData {
 	private Map<String , Object> cache = new HashMap<String , Object>();
+	private Map<String , Long> timestamps = new HashMap<String , Long>();
 	
 	private static LocalCacheData instance = null;
 	
@@ -34,11 +35,12 @@ public class LocalCacheData {
 		}
 		
 		cache.remove(key);
+		timestamps.remove(key);
 		
 		readwritelock.writeLock().unlock();
 	}
 	
-	public void set(String key , Object value) {
+	public void set(String key , Object value , Long expire) {
 		readwritelock.writeLock().lock();
 		if (this.cache == null) {
 			readwritelock.writeLock().unlock();
@@ -46,6 +48,7 @@ public class LocalCacheData {
 		}
 		
 		cache.put(key , value);
+		timestamps.put(key , expire);
 		
 		readwritelock.writeLock().unlock();
 	}
@@ -58,6 +61,19 @@ public class LocalCacheData {
 		}
 		
 		Object ret = this.cache.get(key);
+		readwritelock.readLock().unlock();
+		
+		return ret;
+	}
+	
+	public Long getExpired(String key) {
+		readwritelock.readLock().lock();
+		if (this.timestamps == null) {
+			readwritelock.readLock().unlock();
+			return null;
+		}
+		
+		Long ret = this.timestamps.get(key);
 		readwritelock.readLock().unlock();
 		
 		return ret;

@@ -42,12 +42,15 @@ public class LocalCacheExpirer extends Thread {
 					continue;
 				}
 				
-				if (expiredData.getExpiredTime() <= System.currentTimeMillis()){		
-					LocalCacheData.getInstance().del(expiredData.getExpiredKey());
+				Long current = System.currentTimeMillis();
+				if (expiredData.getExpiredTime().longValue() <= current.longValue()){
+					if (LocalCacheData.getInstance().getExpired(expiredData.getExpiredKey()).longValue() <= expiredData.getExpiredTime().longValue()) {
+						LocalCacheData.getInstance().del(expiredData.getExpiredKey());
+					}
 				} else {
 					expireQueue.put(expiredData);
 					
-					Thread.sleep(200);
+					Thread.sleep(100);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

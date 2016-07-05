@@ -7,7 +7,7 @@ public enum LocalCacheConst {
 	LOCAL_CACHE_CMD_QUEUE_TMO("500" , "命令队列超时"),
 	LOCAL_CACHE_HC_TMO("1000" , "健康检查超时时间"),
 	LOCAL_CACHE_EXPIRE_QUEUE_SIZE("8192000" , "超时队列容量"),
-	LOCAL_CACHE_EXPIRE_QUEUE_TMO("500" , "队列超时");
+	LOCAL_CACHE_EXPIRE_QUEUE_TMO("100" , "队列超时");
 	
 	private String definition;
 	private String desc;
