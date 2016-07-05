@@ -46,6 +46,8 @@ public class LocalCacheExpirer extends Thread {
 					LocalCacheData.getInstance().del(expiredData.getExpiredKey());
 				} else {
 					expireQueue.put(expiredData);
+					
+					Thread.sleep(200);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
