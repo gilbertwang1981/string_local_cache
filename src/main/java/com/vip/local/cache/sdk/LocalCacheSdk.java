@@ -44,9 +44,7 @@ public class LocalCacheSdk {
 		data.put("cache_key" , key);
 		data.put("cache_value" , value);
 		if (expire != null) {
-			long expireTime = expire.intValue() * 1000 + System.currentTimeMillis();
-			
-			data.put("cache_expire" , new Long(expireTime));
+			data.put("cache_expire" , new Long(expire));
 		} else {
 			data.put("cache_expire" , new Long(0));
 		}

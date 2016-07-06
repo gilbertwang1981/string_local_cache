@@ -45,9 +45,6 @@ public class LocalCacheExpirer extends Thread {
 				Long current = System.currentTimeMillis();
 				if (expiredData.getExpiredTime().longValue() <= current.longValue()){
 					if (LocalCacheData.getInstance().getExpired(expiredData.getExpiredKey()).longValue() <= expiredData.getExpiredTime().longValue()) {
-						System.out.println("delete the data:" + expiredData.getExpiredTime() + " " + 
-								current + " " + LocalCacheData.getInstance().getExpired(expiredData.getExpiredKey()));
-						
 						LocalCacheData.getInstance().del(expiredData.getExpiredKey());
 					}
 				} else {
