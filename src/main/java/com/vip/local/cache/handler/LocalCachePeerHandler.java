@@ -7,7 +7,6 @@ public class LocalCachePeerHandler extends SimpleChannelInboundHandler<String>{
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext arg0, String arg1) throws Exception {
-		System.out.println(arg1);
 	}
 
 	@Override

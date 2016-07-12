@@ -52,7 +52,9 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<String>
 			LocalCacheCommandWorker.getInstance().addCommand(command);
 
 			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
-		} else {
+		} else if (type.getCommand().contains(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB.getCommand())){
+			ctx.writeAndFlush(CommandCoder.encodeCommand(true , "success"));
+		}else {
 			ctx.writeAndFlush(CommandCoder.encodeCommand(false , "invalid command"));
 		}
 	}

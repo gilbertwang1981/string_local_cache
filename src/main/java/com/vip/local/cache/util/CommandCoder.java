@@ -24,6 +24,8 @@ public class CommandCoder {
 			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET;
 		} else if (cmd.equalsIgnoreCase(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand())) {
 			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL;
+		} else if (cmd.equalsIgnoreCase(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB.getCommand())) {
+			return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB;
 		}
 		
 		return LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_INV;

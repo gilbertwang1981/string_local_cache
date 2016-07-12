@@ -21,4 +21,10 @@ public class LocalCachePeerUtil {
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand() + " " + key + " " + 
 				JSON.toJSONString(value) + " " + expire + "\n");
 	}
+	
+	public static boolean healthCheck(String host) {
+		return LocalCacheClientInitializer.getInstance().replicate(host , 
+				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB.getCommand() + " " + 
+				host +  "\n");
+	}
 }

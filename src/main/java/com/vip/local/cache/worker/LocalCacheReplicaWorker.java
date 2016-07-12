@@ -56,6 +56,23 @@ public final class LocalCacheReplicaWorker extends Thread{
 		return ret;
 	}
 	
+	public boolean healthCheck(){
+		if (hosts == null) {
+			return false;
+		}
+		
+		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
+		
+		boolean ret = true;
+		for (String host : params) {
+			if (!LocalCachePeerUtil.healthCheck(host)){
+				ret = false;
+			}
+		}
+		
+		return ret;
+	}
+	
 	public boolean delCache(String key) {
 		if (hosts == null) {
 			return false;
@@ -98,6 +115,8 @@ public final class LocalCacheReplicaWorker extends Thread{
 						LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_TMO.getDefinition()) , 
 						TimeUnit.MILLISECONDS);
 				if (value == null) {
+					this.healthCheck();
+					
 					continue;
 				}
 				
