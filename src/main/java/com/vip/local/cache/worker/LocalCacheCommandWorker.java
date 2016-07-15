@@ -33,21 +33,19 @@ public class LocalCacheCommandWorker extends Thread{
 				if (value == null) {
 					continue;
 				}
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 	
-			if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() == value.getCode()) {
-				LocalCacheCommandMgr.getInstance().execute(
-						LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , value);
-			} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() == value.getCode()) {
-				LocalCacheCommandMgr.getInstance().execute(
-						LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() , value);
-			} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() == value.getCode()) {
-				LocalCacheCommandMgr.getInstance().execute(
-						LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , value);
+				if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() == value.getCode()) {
+					LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , value);
+				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() == value.getCode()) {
+					LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() , value);
+				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() == value.getCode()) {
+					LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , value);
+				} 
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
