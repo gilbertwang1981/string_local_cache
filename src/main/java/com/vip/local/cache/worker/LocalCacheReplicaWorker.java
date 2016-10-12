@@ -1,7 +1,6 @@
 package com.vip.local.cache.worker;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -50,7 +49,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		HashMap<String , Object> data = new HashMap<String , Object>();
 		
 		data.put("cache_key" , "flush_parameter_key");
-		data.put("cache_value" , URLEncoder.encode(parameter , "UTF-8"));
+		data.put("cache_value" , parameter);
 		data.put("cache_expire" , System.currentTimeMillis());
 		data.put("cache_host" , host);
 		
