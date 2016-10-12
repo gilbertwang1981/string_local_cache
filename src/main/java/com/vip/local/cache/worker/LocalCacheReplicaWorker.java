@@ -1,5 +1,8 @@
 package com.vip.local.cache.worker;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -18,6 +21,9 @@ public final class LocalCacheReplicaWorker extends Thread{
 	
 	private BlockingQueue<LocalCacheParameter> queue = new ArrayBlockingQueue<LocalCacheParameter>(
 			new Integer(LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_SIZE.getDefinition()));
+	
+	private BlockingQueue<LocalCacheParameter> retransmitQueue = new ArrayBlockingQueue<LocalCacheParameter>(
+			new Integer(LocalCacheConst.LOCAL_CACHE_RETRANS_QUEUE_SIZE.getDefinition()));
 	
 	public static LocalCacheReplicaWorker getInstance(){
 		if (instance == null) {
@@ -39,6 +45,45 @@ public final class LocalCacheReplicaWorker extends Thread{
 		queue.add(command);
 	}
 	
+	private boolean retransmit(String host , String parameter) throws UnsupportedEncodingException{
+		LocalCacheParameter lcParameter = new LocalCacheParameter();
+		HashMap<String , Object> data = new HashMap<String , Object>();
+		
+		data.put("cache_key" , "flush_parameter_key");
+		data.put("cache_value" , URLEncoder.encode(parameter , "UTF-8"));
+		data.put("cache_expire" , System.currentTimeMillis());
+		data.put("cache_host" , host);
+		
+		lcParameter.setParams(data);
+		
+		return retransmitQueue.add(lcParameter);
+	}
+	
+	private boolean doRetransmit() {
+		try {
+			LocalCacheParameter value = retransmitQueue.poll(new Integer(
+					LocalCacheConst.LOCAL_CACHE_RETRANS_QUEUE_TMO.getDefinition()) , 
+					TimeUnit.MILLISECONDS);
+			if (value == null) {
+				return false;
+			}
+			
+			long expire = (Long)value.getParams().get("cache_expire");
+			if (expire > (System.currentTimeMillis() - 
+					new Long(LocalCacheConst.LOCAL_CACHE_RETRANS_TMO.getDefinition()).longValue())) {
+				
+				retransmitQueue.add(value);
+				
+				return false;
+			} else {
+				return LocalCachePeerUtil.replicate4Flush(value.getParams().get("cache_host").toString() , 
+					value.getParams().get("cache_value").toString());
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public boolean flushCache(String parameter) throws NumberFormatException, Exception{
 		if (hosts == null) {
 			return false;
@@ -50,6 +95,9 @@ public final class LocalCacheReplicaWorker extends Thread{
 		for (String host : params) {
 			if (!LocalCachePeerUtil.replicate4Flush(host , parameter)){
 				ret = false;
+				if (!this.retransmit(host, parameter)) {
+					// TODO:
+				}
 			}
 		}
 		
@@ -115,7 +163,9 @@ public final class LocalCacheReplicaWorker extends Thread{
 						LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_TMO.getDefinition()) , 
 						TimeUnit.MILLISECONDS);
 				if (value == null) {
-					this.healthCheck();
+					if (!this.doRetransmit()){
+						this.healthCheck();
+					}
 					
 					continue;
 				}

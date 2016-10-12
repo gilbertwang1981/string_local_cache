@@ -81,18 +81,18 @@ public class LocalCacheClientInitializer extends Thread{
 		if(channel != null) {
 			try {
 				channel.writeAndFlush(msg).sync();
+				
+				return true;
 			} catch (Exception e) {
 				retryConnects.add(host + ":" + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
 				channelKeys.remove(host + ":" + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
 				channels.remove(host + ":" + LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition());
-				
+
 				return false;
 			}
 		}else{
-			return true;
+			return false;
 		}
-		
-		return false;
 	}
 	
 	public void run(){

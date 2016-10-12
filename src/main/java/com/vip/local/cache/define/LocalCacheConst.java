@@ -5,8 +5,11 @@ public enum LocalCacheConst {
 	LOCAL_CACHE_MAX_FRAME_SIZE("2097152" , "最大针大小"),
 	LOCAL_CACHE_CMD_QUEUE_SIZE("819200" , "命令队列大小"),
 	LOCAL_CACHE_CMD_QUEUE_TMO("500" , "命令队列超时"),
+	LOCAL_CACHE_RETRANS_QUEUE_TMO("200" , "超时队列超时"),
+	LOCAL_CACHE_RETRANS_TMO("300000" , "超时队列超时"),
 	LOCAL_CACHE_HC_TMO("1000" , "健康检查超时时间"),
 	LOCAL_CACHE_EXPIRE_QUEUE_SIZE("8192000" , "超时队列容量"),
+	LOCAL_CACHE_RETRANS_QUEUE_SIZE("1000000" , "重传队列大小"),
 	LOCAL_CACHE_EXPIRE_QUEUE_TMO("100" , "队列超时");
 	
 	private String definition;
