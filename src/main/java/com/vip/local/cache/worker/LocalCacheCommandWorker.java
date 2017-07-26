@@ -35,14 +35,20 @@ public class LocalCacheCommandWorker extends Thread{
 				}
 	
 				if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() == value.getCode()) {
-					LocalCacheCommandMgr.getInstance().execute(
-							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , value);
+					if (!LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , value)){
+						throw new Exception("execute failed," + value);
+					}
 				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() == value.getCode()) {
-					LocalCacheCommandMgr.getInstance().execute(
-							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() , value);
+					if (!LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() , value)){
+						throw new Exception("execute failed," + value);
+					}
 				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() == value.getCode()) {
-					LocalCacheCommandMgr.getInstance().execute(
-							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , value);
+					if (!LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , value)){
+						throw new Exception("execute failed," + value);
+					}
 				} 
 			} catch (Exception e) {
 				e.printStackTrace();

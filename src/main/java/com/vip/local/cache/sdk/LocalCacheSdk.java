@@ -1,9 +1,10 @@
 package com.vip.local.cache.sdk;
 
-import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.cache.LoadingCache;
 import com.vip.local.cache.data.LocalCacheData;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheInitializer;
@@ -21,39 +22,33 @@ public class LocalCacheSdk {
 		return instance;
 	}
 	
-	public void initialize(LocalCacheCallback callback , String hosts) throws NumberFormatException, InterruptedException{
+	public void initialize(LoadingCache<Object , Object> cache , 
+			LocalCacheNotifyCallback callback , String hosts) throws NumberFormatException, InterruptedException {
+		LocalCacheData.getInstance().setCache(cache);
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Object get(String key , @SuppressWarnings("rawtypes") Class type) {
-		JSONObject obj = (JSONObject) LocalCacheData.getInstance().get(key);
-		
-		if (obj == null) {
-			return null;
+	public Object get(Object key , Object defaultValue) {
+		try {
+			return LocalCacheData.getInstance().get(key);
+		} catch (ExecutionException e) {
+			return defaultValue;
 		}
-		
-		return obj.toJavaObject(type);
 	}
 	
-	public void set(String key , Object value , Integer expire) {
+	public void set(Object key , Object value) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
 		HashMap<String , Object> data = new HashMap<String , Object>();
 		data.put("cache_key" , key);
 		data.put("cache_value" , value);
-		if (expire != null) {
-			data.put("cache_expire" , new Long(expire));
-		} else {
-			data.put("cache_expire" , new Long(0));
-		}
 		param.setParams(data);
 		
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void del(String key) {
+	public void del(Object key) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
@@ -64,16 +59,13 @@ public class LocalCacheSdk {
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void flush(String parameter) throws NumberFormatException, Exception{
+	public void flush(String parameter) throws UnsupportedEncodingException {
 		LocalCacheParameter param = new LocalCacheParameter();
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 		
 		HashMap<String , Object> data = new HashMap<String , Object>();
 		
-		data.put("cache_key" , "flush_parameter_key");
-		data.put("cache_value" , URLEncoder.encode(parameter , "UTF-8"));
-		param.setParams(data);
-		
+		data.put("cache_value" , parameter);
 		param.setParams(data);
 		
 		LocalCacheReplicaWorker.getInstance().addCommand(param);

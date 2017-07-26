@@ -1,81 +1,42 @@
 package com.vip.local.cache.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ExecutionException;
+
+import com.google.common.cache.LoadingCache;
 
 public class LocalCacheData {
-	private Map<String , Object> cache = new HashMap<String , Object>();
-	private Map<String , Long> timestamps = new HashMap<String , Long>();
-	
+	private LoadingCache<Object, Object> cache = null;
 	private static LocalCacheData instance = null;
-	
-	private ReadWriteLock readwritelock = new ReentrantReadWriteLock();
-	
+		
 	public static LocalCacheData getInstance(){
 		if (instance == null) {
 			instance = new LocalCacheData();
 		}
-		
 		return instance;
 	}
 	
-	public void switchCache(Map<String , Object> cache) {
-		readwritelock.writeLock().lock();
+	public void setCache(LoadingCache<Object , Object> cache) {
 		this.cache = cache;
-		readwritelock.writeLock().unlock();
 	}
 	
-	public void del(String key) {
-		readwritelock.writeLock().lock();
-		if (this.cache == null) {
-			readwritelock.writeLock().unlock();
-			return;
+	public void del(Object key) throws ExecutionException {
+		if (cache == null) {
+			throw new ExecutionException(new Error("the cache object is null"));
 		}
-		
-		cache.remove(key);
-		timestamps.remove(key);
-		
-		readwritelock.writeLock().unlock();
+		cache.invalidate(key);
 	}
 	
-	public void set(String key , Object value , Long expire) {
-		readwritelock.writeLock().lock();
-		if (this.cache == null) {
-			readwritelock.writeLock().unlock();
-			return;
+	public void set(Object key , Object value) throws ExecutionException {
+		if (cache == null) {
+			throw new ExecutionException(new Error("the cache object is null"));
 		}
-		
 		cache.put(key , value);
-		timestamps.put(key , expire);
-		
-		readwritelock.writeLock().unlock();
 	}
 	
-	public Object get(String key) {
-		readwritelock.readLock().lock();
-		if (this.cache == null) {
-			readwritelock.readLock().unlock();
-			return null;
+	public Object get(Object key) throws ExecutionException {
+		if (cache == null) {
+			throw new ExecutionException(new Error("the cache object is null"));
 		}
-		
-		Object ret = this.cache.get(key);
-		readwritelock.readLock().unlock();
-		
-		return ret;
-	}
-	
-	public Long getExpired(String key) {
-		readwritelock.readLock().lock();
-		if (this.timestamps == null) {
-			readwritelock.readLock().unlock();
-			return null;
-		}
-		
-		Long ret = this.timestamps.get(key);
-		readwritelock.readLock().unlock();
-		
-		return ret;
+		return cache.get(key);
 	}
 }

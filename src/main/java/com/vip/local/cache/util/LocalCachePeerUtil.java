@@ -1,6 +1,8 @@
 package com.vip.local.cache.util;
 
-import com.alibaba.fastjson.JSON;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheClientInitializer;
 
@@ -8,7 +10,7 @@ public class LocalCachePeerUtil {
 	public static boolean replicate4Flush(String host , String parameter) throws NumberFormatException, Exception {
 		return LocalCacheClientInitializer.getInstance().replicate(host , 
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCommand() + " " + 
-				parameter + "\n");
+				URLEncoder.encode(parameter , "UTF-8") + "\n");
 	}
 	
 	public static boolean replicate4Del(String host , String key) {
@@ -16,10 +18,10 @@ public class LocalCachePeerUtil {
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCommand() + " " + key + "\n");
 	}
 	
-	public static boolean replicate4Set(String host , String key , Object value , Long expire) {
+	public static boolean replicate4Set(String host , String key , Object value) throws UnsupportedEncodingException {
 		return LocalCacheClientInitializer.getInstance().replicate(host , 
 				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCommand() + " " + key + " " + 
-				JSON.toJSONString(value) + " " + expire + "\n");
+				URLEncoder.encode((String)value , "UTF-8") + "\n");
 	}
 	
 	public static boolean healthCheck(String host) {

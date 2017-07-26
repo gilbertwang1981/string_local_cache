@@ -6,7 +6,11 @@ import com.vip.local.cache.param.LocalCacheParameter;
 public class DelLocalCacheCommand implements LocalCacheCommand{
 
 	public boolean execute(LocalCacheParameter paramter) {
-		LocalCacheData.getInstance().del((String)paramter.getParams().get("cache_key"));
+		try {
+			LocalCacheData.getInstance().del(paramter.getParams().get("cache_key"));
+		} catch (Exception e) {
+			return false;
+		}
 		
 		return true;
 	}

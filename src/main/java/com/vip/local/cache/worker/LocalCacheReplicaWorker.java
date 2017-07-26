@@ -1,7 +1,6 @@
 package com.vip.local.cache.worker;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -21,9 +20,6 @@ public final class LocalCacheReplicaWorker extends Thread{
 	private BlockingQueue<LocalCacheParameter> queue = new ArrayBlockingQueue<LocalCacheParameter>(
 			new Integer(LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_SIZE.getDefinition()));
 	
-	private BlockingQueue<LocalCacheParameter> retransmitQueue = new ArrayBlockingQueue<LocalCacheParameter>(
-			new Integer(LocalCacheConst.LOCAL_CACHE_RETRANS_QUEUE_SIZE.getDefinition()));
-	
 	public static LocalCacheReplicaWorker getInstance(){
 		if (instance == null) {
 			instance = new LocalCacheReplicaWorker();
@@ -32,53 +28,15 @@ public final class LocalCacheReplicaWorker extends Thread{
 		return instance;
 	}
 	
-	private LocalCacheReplicaWorker(){
-		this.hosts = System.getenv("LOCAL_CACHE_HOST_SET");
-	}
-	
 	public void setHosts(String hosts) {
 		this.hosts = hosts;
 	}
 	
-	public void addCommand(LocalCacheParameter command) {
-		queue.add(command);
-	}
-	
-	private boolean retransmit(String host , String parameter) throws UnsupportedEncodingException{
-		LocalCacheParameter lcParameter = new LocalCacheParameter();
-		HashMap<String , Object> data = new HashMap<String , Object>();
-		
-		data.put("cache_key" , "flush_parameter_key");
-		data.put("cache_value" , parameter);
-		data.put("cache_expire" , System.currentTimeMillis());
-		data.put("cache_host" , host);
-		
-		lcParameter.setParams(data);
-		
-		return retransmitQueue.add(lcParameter);
-	}
-	
-	private boolean doRetransmit() {
+	public boolean addCommand(LocalCacheParameter command) {
 		try {
-			LocalCacheParameter value = retransmitQueue.poll(new Integer(
-					LocalCacheConst.LOCAL_CACHE_RETRANS_QUEUE_TMO.getDefinition()) , 
-					TimeUnit.MILLISECONDS);
-			if (value == null) {
-				return false;
-			}
-			
-			long expire = (Long)value.getParams().get("cache_expire");
-			if (expire > (System.currentTimeMillis() - 
-					new Long(LocalCacheConst.LOCAL_CACHE_RETRANS_TMO.getDefinition()).longValue())) {
-				
-				retransmitQueue.add(value);
-				
-				return false;
-			} else {
-				return LocalCachePeerUtil.replicate4Flush(value.getParams().get("cache_host").toString() , 
-					value.getParams().get("cache_value").toString());
-			}
-		} catch (Exception e) {
+			return queue.add(command);
+		} catch (IllegalStateException e) {
+			// no space left to add more.
 			return false;
 		}
 	}
@@ -94,9 +52,6 @@ public final class LocalCacheReplicaWorker extends Thread{
 		for (String host : params) {
 			if (!LocalCachePeerUtil.replicate4Flush(host , parameter)){
 				ret = false;
-				if (!this.retransmit(host, parameter)) {
-					// TODO:
-				}
 			}
 		}
 		
@@ -137,7 +92,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		return ret;
 	}
 	
-	public boolean setCache(String key , Object value , Long expire) {
+	public boolean setCache(String key , Object value) throws UnsupportedEncodingException {
 		if (hosts == null) {
 			return false;
 		}
@@ -146,7 +101,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Set(host , key , value , expire)){
+			if (!LocalCachePeerUtil.replicate4Set(host , key , value)){
 				ret = false;
 			}
 		}
@@ -162,10 +117,8 @@ public final class LocalCacheReplicaWorker extends Thread{
 						LocalCacheConst.LOCAL_CACHE_CMD_QUEUE_TMO.getDefinition()) , 
 						TimeUnit.MILLISECONDS);
 				if (value == null) {
-					if (!this.doRetransmit()){
-						this.healthCheck();
-					}
-					
+					this.healthCheck();
+
 					continue;
 				}
 				
@@ -174,12 +127,10 @@ public final class LocalCacheReplicaWorker extends Thread{
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
 					this.delCache((String)value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {
-					this.setCache((String)value.getParams().get("cache_key") , 
-							value.getParams().get("cache_value") , 
-							(Long)value.getParams().get("cache_expire"));
+					this.setCache((String)value.getParams().get("cache_key") , value.getParams().get("cache_value"));
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				// nothing to do
 			}
 		}
 	}

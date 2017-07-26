@@ -4,140 +4,78 @@ coding as following.
 
 package com.vip.local.cache.test;
 
-import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import com.vip.local.cache.sdk.LocalCacheCallback;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
 import com.vip.local.cache.sdk.LocalCacheSdk;
 
-class TestObject {
-	private String hostName;
-	private Long timestamp;
-	
-	public Long getTimestamp() {
-		return timestamp;
-	}
-	public void setTimestamp(Long timestamp) {
-		this.timestamp = timestamp;
-	}
-	public String getHostName() {
-		return hostName;
-	}
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
+import junit.framework.TestCase;
+
+// flush command callback function, user defined.
+class LocalCacheCallback implements LocalCacheNotifyCallback {
+
+	public boolean onNotify(Object param) {
+		System.out.println("no notify:" + param.toString());
+		
+		return true;
 	}
 }
 
-class SampleLocalCacheCallback implements LocalCacheCallback {
-
-	public Map<String, Object> onFlush(Object param) {
-		System.out.println("onFlush:" + param);
-		
-		HashMap<String , Object> ret = new HashMap<String , Object>();
-		
-		ret.put("key", new Long(System.currentTimeMillis()).toString());
-		
-		return ret;
-	}
-}
-
-class MyThreadData extends Thread{
+// in every 500 ms, the thread will get the data from local cache.
+class Getter extends Thread {
 	public void run(){
 		while (true) {
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(500);
+				
+				System.out.println(LocalCacheSdk.getInstance().get("1" , "3"));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			System.out.println(LocalCacheSdk.getInstance().get("key" , String.class));
-		}
-	}
-}
-
-class MyThreadSetter extends Thread {
-	public void run() {
-		long counter = 0;
-		while (true) {
-			try {
-				Thread.sleep(1);
-				
-				TestObject obj = new TestObject();
-				obj.setHostName(InetAddress.getLocalHost().getHostName());
-				obj.setTimestamp(System.currentTimeMillis());
-				
-				if (counter ++ % 2 == 0) {
-					LocalCacheSdk.getInstance().set("host" ,  obj , 1);
-				} else {
-					LocalCacheSdk.getInstance().del("host");
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
 }
 
-class MyThreadGetter extends Thread {
+// launch the distributed local cache notifier
+class Starter extends Thread {
+	private LoadingCache<Object, Object> cahceBuilder = CacheBuilder.newBuilder()
+			.refreshAfterWrite(1 , TimeUnit.SECONDS).expireAfterWrite(3 , TimeUnit.SECONDS)
+            .build(new CacheLoader<Object, Object>() {  
+                @Override
+                public String load(Object key) throws Exception {
+                    return UUID.randomUUID().toString(); 
+                }  
+            });
+	
 	public void run(){
-		while (true) {
-			try {
-				Thread.sleep(2);
-				
-				TestObject obj = (TestObject)LocalCacheSdk.getInstance().get("host" , TestObject.class);
-				if (obj != null) {
-					System.out.println(obj.getHostName() + "-" + obj.getTimestamp());
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			LocalCacheSdk.getInstance().initialize(cahceBuilder , 
+					new LocalCacheCallback() , "127.0.0.1");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }
 
-class MyThreadFlush extends Thread {
-	public void run(){
+public class LocalCacheServerTest extends TestCase {
+	
+	public void setUp() throws NumberFormatException, InterruptedException{
+		new Starter().start();
+		new Getter().start();
+	}
+	
+	public void testLocalCacheServer00() throws InterruptedException{
+		int counter = 0;
 		while (true) {
-			try {
-				Thread.sleep(5000);
-				
-				StringBuffer param = new StringBuffer();
-				for (int i = 0;i < 5;i++) {
-					param.append("hello world " + i);
-				}
-				
-				LocalCacheSdk.getInstance().flush(param.toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			LocalCacheSdk.getInstance().set("1" , "helloworld" + counter ++);
+		
+			Thread.sleep(100);
 		}
 	}
-}
-
-public class LocalCacheTest {
-	public static void main(String [] args) throws NumberFormatException, InterruptedException {
-		new MyThreadData().start();
-		new MyThreadFlush().start();
-		MyThreadSetter setter = null;
-		MyThreadGetter getter = null;
-		
-		String hosts = null;
-		
-		if (System.getProperty("hosts") != null) {
-			hosts = System.getProperty("hosts");
-		}
-		
-		if (System.getProperty("mode").equalsIgnoreCase("set")) {
-			setter = new MyThreadSetter();
-			setter.start();
-		} else {
-			getter = new MyThreadGetter();
-			getter.start();
-		}
-		
-		LocalCacheSdk.getInstance().initialize(new SampleLocalCacheCallback() , hosts);
+	
+	public void tearDown(){
 	}
 }

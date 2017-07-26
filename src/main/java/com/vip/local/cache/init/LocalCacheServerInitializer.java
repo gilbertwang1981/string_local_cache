@@ -27,7 +27,4 @@ public class LocalCacheServerInitializer extends ChannelInitializer<SocketChanne
         
         pipeline.addLast("handler", new LocalCacheServerHandler());
 	}
-
-	public LocalCacheServerInitializer() {
-	}
 }

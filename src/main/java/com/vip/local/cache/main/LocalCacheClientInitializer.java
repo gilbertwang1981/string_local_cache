@@ -57,6 +57,9 @@ public class LocalCacheClientInitializer extends Thread{
 		});
 		
 		bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+		bootstrap.option(ChannelOption.SO_REUSEADDR , true);
+		bootstrap.option(ChannelOption.SO_SNDBUF , 1024 * 1024 * 2);
+		bootstrap.option(ChannelOption.SO_RCVBUF , 1024 * 1024 * 2);
 	}
 	
 	private Channel getChannel(String host , int port){
