@@ -11,12 +11,12 @@ import com.vip.local.cache.main.LocalCacheInitializer;
 import com.vip.local.cache.param.LocalCacheParameter;
 import com.vip.local.cache.worker.LocalCacheReplicaWorker;
 
-public class LocalCacheSdk {
-	private static LocalCacheSdk instance = null;
+public class StringLocalCache {
+	private static StringLocalCache instance = null;
 	
-	public static LocalCacheSdk getInstance(){
+	public static StringLocalCache getInstance(){
 		if (instance == null) {
-			instance = new LocalCacheSdk();
+			instance = new StringLocalCache();
 		}
 		
 		return instance;
@@ -28,7 +28,7 @@ public class LocalCacheSdk {
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
-	public Object get(String key , String defaultValue) {
+	public String get(String key , String defaultValue) {
 		try {
 			return LocalCacheData.getInstance().get(key);
 		} catch (ExecutionException e) {

@@ -8,7 +8,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
-import com.vip.local.cache.sdk.LocalCacheSdk;
+import com.vip.local.cache.sdk.StringLocalCache;
 
 import junit.framework.TestCase;
 
@@ -27,7 +27,7 @@ class Getter extends Thread {
 			try {
 				Thread.sleep(500);
 				
-				System.out.println((String)LocalCacheSdk.getInstance().get("1" , "3"));
+				System.out.println((String)StringLocalCache.getInstance().get("1" , "3"));
 			} catch (InterruptedException e) {
 			}
 		}
@@ -46,7 +46,7 @@ class Starter extends Thread {
 	
 	public void run(){
 		try {
-			LocalCacheSdk.getInstance().initialize(cahceBuilder , 
+			StringLocalCache.getInstance().initialize(cahceBuilder , 
 					new LocalCacheCallback() , "127.0.0.1");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,9 +68,9 @@ public class LocalCacheServerTest extends TestCase {
 		}
 		
 		while (true) {
-			LocalCacheSdk.getInstance().set("1" , sb.toString());
+			StringLocalCache.getInstance().set("1" , sb.toString());
 			
-			LocalCacheSdk.getInstance().notify("flush the cache.");
+			StringLocalCache.getInstance().notify("flush the cache.");
 		
 			Thread.sleep(100);
 		}
