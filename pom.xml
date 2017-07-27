@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.vip.local.cache</groupId>
-  <artifactId>common_local_cache</artifactId>
+  <artifactId>string_local_cache</artifactId>
   <version>0.0.5</version>
   <packaging>jar</packaging>
 
-  <name>common_local_cache</name>
+  <name>string_local_cache</name>
   <url>http://maven.apache.org</url>
 
   <properties>
