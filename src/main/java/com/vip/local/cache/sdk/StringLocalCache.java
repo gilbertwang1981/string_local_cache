@@ -36,7 +36,7 @@ public class StringLocalCache {
 		}
 	}
 	
-	public void set(String key , String value) {
+	public boolean set(String key , String value) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
@@ -45,10 +45,10 @@ public class StringLocalCache {
 		data.put("cache_value" , value);
 		param.setParams(data);
 		
-		LocalCacheReplicaWorker.getInstance().addCommand(param);
+		return LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void del(String key) {
+	public boolean del(String key) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
@@ -56,10 +56,10 @@ public class StringLocalCache {
 		data.put("cache_key", key);
 		param.setParams(data);
 		
-		LocalCacheReplicaWorker.getInstance().addCommand(param);
+		return LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void notify(String parameter) throws UnsupportedEncodingException {
+	public boolean notify(String parameter) throws UnsupportedEncodingException {
 		LocalCacheParameter param = new LocalCacheParameter();
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode());
 		
@@ -68,6 +68,6 @@ public class StringLocalCache {
 		data.put("cache_value" , parameter);
 		param.setParams(data);
 		
-		LocalCacheReplicaWorker.getInstance().addCommand(param);
+		return LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 }
