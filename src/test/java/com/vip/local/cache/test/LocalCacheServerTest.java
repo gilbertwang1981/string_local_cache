@@ -35,11 +35,11 @@ class Getter extends Thread {
 }
 
 class Starter extends Thread {
-	private LoadingCache<Object, Object> cahceBuilder = CacheBuilder.newBuilder()
+	private LoadingCache<String , String> cahceBuilder = CacheBuilder.newBuilder()
 			.refreshAfterWrite(1 , TimeUnit.SECONDS).expireAfterWrite(3 , TimeUnit.SECONDS)
-            .build(new CacheLoader<Object, Object>() {  
+            .build(new CacheLoader<String , String>() {  
                 @Override
-                public String load(Object key) throws Exception {
+                public String load(String key) throws Exception {
                     return UUID.randomUUID().toString(); 
                 }  
             });
@@ -70,7 +70,7 @@ public class LocalCacheServerTest extends TestCase {
 		while (true) {
 			LocalCacheSdk.getInstance().set("1" , sb.toString());
 			
-			LocalCacheSdk.getInstance().flush("flush the cache.");
+			LocalCacheSdk.getInstance().notify("flush the cache.");
 		
 			Thread.sleep(100);
 		}

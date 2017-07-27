@@ -6,9 +6,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.google.protobuf.ByteString;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.param.LocalCacheParameter;
+import com.vip.local.cache.proto.CommonLocalCache;
+import com.vip.local.cache.proto.CommonLocalCache.CacheCommand.Builder;
 import com.vip.local.cache.util.LocalCachePeerUtil;
 import com.vip.local.cache.util.LocalCacheUtil;
 
@@ -41,16 +44,19 @@ public final class LocalCacheReplicaWorker extends Thread{
 		}
 	}
 	
-	public boolean flushCache(String parameter) throws NumberFormatException, Exception{
+	public boolean notify(String parameter) throws NumberFormatException, Exception{
 		if (hosts == null) {
 			return false;
 		}
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
+
+		Builder builder = CommonLocalCache.CacheCommand.newBuilder().setParameter(
+				parameter).setMessageType(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Flush(host , parameter)){
+			if (!LocalCachePeerUtil.replicate4Notify(host , builder.build())){
 				ret = false;
 			}
 		}
@@ -65,9 +71,11 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
+		Builder builder = CommonLocalCache.CacheCommand.newBuilder().setMessageType(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB.getCode());
+		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.healthCheck(host)){
+			if (!LocalCachePeerUtil.healthCheck(host , builder.build())){
 				ret = false;
 			}
 		}
@@ -82,9 +90,12 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
+		Builder builder = CommonLocalCache.CacheCommand.newBuilder().setMessageType(
+				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()).setKey(key);
+		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Del(host , key)){
+			if (!LocalCachePeerUtil.replicate4Del(host , builder.build())){
 				ret = false;
 			}
 		}
@@ -99,9 +110,12 @@ public final class LocalCacheReplicaWorker extends Thread{
 		
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 		
+		Builder builder = CommonLocalCache.CacheCommand.newBuilder().setMessageType(
+				LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()).setKey(key).setValue(ByteString.copyFrom((String) value , "UTF-8"));
+		
 		boolean ret = true;
 		for (String host : params) {
-			if (!LocalCachePeerUtil.replicate4Set(host , key , value)){
+			if (!LocalCachePeerUtil.replicate4Set(host , builder.build())){
 				ret = false;
 			}
 		}
@@ -123,7 +137,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 				}
 				
 				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()){
-					this.flushCache((String)value.getParams().get("cache_value"));
+					this.notify((String)value.getParams().get("cache_value"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
 					this.delCache((String)value.getParams().get("cache_key"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode()) {

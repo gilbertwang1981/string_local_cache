@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.cache.LoadingCache;
 
 public class LocalCacheData {
-	private LoadingCache<Object, Object> cache = null;
+	private LoadingCache<String , String> cache = null;
 	private static LocalCacheData instance = null;
 		
 	public static LocalCacheData getInstance(){
@@ -15,25 +15,25 @@ public class LocalCacheData {
 		return instance;
 	}
 	
-	public void setCache(LoadingCache<Object , Object> cache) {
+	public void setCache(LoadingCache<String , String> cache) {
 		this.cache = cache;
 	}
 	
-	public void del(Object key) throws ExecutionException {
+	public void del(String key) throws ExecutionException {
 		if (cache == null) {
 			throw new ExecutionException(new Error("the cache object is null"));
 		}
 		cache.invalidate(key);
 	}
 	
-	public void set(Object key , Object value) throws ExecutionException {
+	public void set(String key , String value) throws ExecutionException {
 		if (cache == null) {
 			throw new ExecutionException(new Error("the cache object is null"));
 		}
 		cache.put(key , value);
 	}
 	
-	public Object get(Object key) throws ExecutionException {
+	public String get(String key) throws ExecutionException {
 		if (cache == null) {
 			throw new ExecutionException(new Error("the cache object is null"));
 		}

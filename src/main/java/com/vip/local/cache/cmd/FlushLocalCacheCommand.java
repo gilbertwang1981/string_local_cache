@@ -1,6 +1,5 @@
 package com.vip.local.cache.cmd;
 
-import java.net.URLDecoder;
 import com.vip.local.cache.param.LocalCacheParameter;
 import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
 
@@ -14,7 +13,7 @@ public class FlushLocalCacheCommand implements LocalCacheCommand{
 
 	public boolean execute(LocalCacheParameter paramter) {
 		try {
-			return callback.onNotify(URLDecoder.decode((String) paramter.getParams().get("cache_value") , "UTF-8"));
+			return callback.onNotify(paramter.getParams().get("cache_value"));
 		} catch (Exception e) {			
 			return false;
 		}

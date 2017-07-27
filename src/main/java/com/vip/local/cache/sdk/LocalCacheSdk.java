@@ -22,13 +22,13 @@ public class LocalCacheSdk {
 		return instance;
 	}
 	
-	public void initialize(LoadingCache<Object , Object> cache , 
+	public void initialize(LoadingCache<String , String> cache , 
 			LocalCacheNotifyCallback callback , String hosts) throws NumberFormatException, InterruptedException {
 		LocalCacheData.getInstance().setCache(cache);
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
-	public Object get(Object key , Object defaultValue) {
+	public Object get(String key , String defaultValue) {
 		try {
 			return LocalCacheData.getInstance().get(key);
 		} catch (ExecutionException e) {
@@ -36,7 +36,7 @@ public class LocalCacheSdk {
 		}
 	}
 	
-	public void set(Object key , Object value) {
+	public void set(String key , String value) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode());
@@ -48,7 +48,7 @@ public class LocalCacheSdk {
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void del(Object key) {
+	public void del(String key) {
 		LocalCacheParameter param = new LocalCacheParameter();
 		
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode());
@@ -59,7 +59,7 @@ public class LocalCacheSdk {
 		LocalCacheReplicaWorker.getInstance().addCommand(param);
 	}
 	
-	public void flush(String parameter) throws UnsupportedEncodingException {
+	public void notify(String parameter) throws UnsupportedEncodingException {
 		LocalCacheParameter param = new LocalCacheParameter();
 		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
 		

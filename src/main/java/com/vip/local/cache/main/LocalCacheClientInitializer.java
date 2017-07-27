@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.handler.LocalCachePeerHandler;
+import com.vip.local.cache.proto.CommonLocalCache;
+import com.vip.local.cache.proto.CommonLocalCache.CacheCommand;
 import com.vip.local.cache.util.LocalCacheUtil;
 
 import io.netty.bootstrap.Bootstrap;
@@ -16,9 +18,10 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 
 public class LocalCacheClientInitializer extends Thread{
 	private static LocalCacheClientInitializer instance = null;
@@ -50,9 +53,11 @@ public class LocalCacheClientInitializer extends Thread{
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
-				pipeline.addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
-				pipeline.addLast("handler", new LocalCachePeerHandler());
+				pipeline.addLast(new LengthFieldBasedFrameDecoder(1024 * 1024 * 5 , 0, 4, 0, 4));  
+				pipeline.addLast(new ProtobufDecoder(CommonLocalCache.CacheCommand.getDefaultInstance()));
+				pipeline.addLast(new LengthFieldPrepender(4));  
+				pipeline.addLast(new ProtobufEncoder());
+				pipeline.addLast(new LocalCachePeerHandler());
 			}
 		});
 		
@@ -78,12 +83,13 @@ public class LocalCacheClientInitializer extends Thread{
 		return channel;
 	}
 	
-	public boolean replicate(String host , String msg) {
+	public boolean replicate(String host , CacheCommand msg) {
 		Channel channel = this.getChannel(host , new Integer(
 				LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition()));
+		
 		if(channel != null) {
 			try {
-				channel.writeAndFlush(msg).sync();
+				channel.writeAndFlush(msg);
 				
 				return true;
 			} catch (Exception e) {

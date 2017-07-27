@@ -7,7 +7,7 @@ public class DelLocalCacheCommand implements LocalCacheCommand{
 
 	public boolean execute(LocalCacheParameter paramter) {
 		try {
-			LocalCacheData.getInstance().del(paramter.getParams().get("cache_key"));
+			LocalCacheData.getInstance().del((String) paramter.getParams().get("cache_key"));
 		} catch (Exception e) {
 			return false;
 		}
