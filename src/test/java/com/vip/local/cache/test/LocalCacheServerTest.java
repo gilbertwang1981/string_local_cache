@@ -7,15 +7,15 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
+import com.vip.local.cache.sdk.StringLocalCacheNotifyCallback;
 import com.vip.local.cache.sdk.StringLocalCache;
 
 import junit.framework.TestCase;
 
-class LocalCacheCallback implements LocalCacheNotifyCallback {
+class LocalCacheCallback implements StringLocalCacheNotifyCallback {
 
-	public boolean onNotify(Object param) {
-		System.out.println("no notify:" + param.toString());
+	public boolean onNotify(String param) {
+		System.out.println("no notify:" + param);
 		
 		return true;
 	}
@@ -71,6 +71,10 @@ public class LocalCacheServerTest extends TestCase {
 			StringLocalCache.getInstance().set("1" , sb.toString());
 			
 			StringLocalCache.getInstance().notify("flush the cache.");
+			
+			if (System.currentTimeMillis() % 5 == 0) {
+				StringLocalCache.getInstance().del("1");
+			}
 		
 			Thread.sleep(100);
 		}

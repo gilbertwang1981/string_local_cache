@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.vip.local.cache.cmd.LocalCacheCommandMgr;
 import com.vip.local.cache.define.LocalCacheConst;
 import com.vip.local.cache.init.LocalCacheServerInitializer;
-import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
+import com.vip.local.cache.sdk.StringLocalCacheNotifyCallback;
 import com.vip.local.cache.worker.LocalCacheCommandWorker;
 import com.vip.local.cache.worker.LocalCacheReplicaWorker;
 
@@ -32,7 +32,7 @@ public class LocalCacheInitializer {
 		return instance;
 	}
 	
-	public void initialize(String port , LocalCacheNotifyCallback callback , 
+	public void initialize(String port , StringLocalCacheNotifyCallback callback , 
 			String hosts) throws NumberFormatException, InterruptedException {
 		if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
 			port = LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition();

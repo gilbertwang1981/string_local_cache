@@ -4,14 +4,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.param.LocalCacheParameter;
-import com.vip.local.cache.sdk.LocalCacheNotifyCallback;
+import com.vip.local.cache.sdk.StringLocalCacheNotifyCallback;
 
 public class LocalCacheCommandMgr {
 	private static LocalCacheCommandMgr instance = null;
 	private ConcurrentHashMap<Integer , LocalCacheCommand> commands = new 
 			ConcurrentHashMap<Integer , LocalCacheCommand>();
 	
-	private LocalCacheNotifyCallback callback = null;
+	private StringLocalCacheNotifyCallback callback = null;
 	
 	public static LocalCacheCommandMgr getInstance() {
 		if (instance == null) {
@@ -21,7 +21,7 @@ public class LocalCacheCommandMgr {
 		return instance;
 	}
 	
-	public void initialize(LocalCacheNotifyCallback callback) {
+	public void initialize(StringLocalCacheNotifyCallback callback) {
 		this.callback = callback;
 		
 		commands.put(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , 

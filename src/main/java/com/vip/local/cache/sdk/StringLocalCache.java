@@ -23,7 +23,7 @@ public class StringLocalCache {
 	}
 	
 	public void initialize(LoadingCache<String , String> cache , 
-			LocalCacheNotifyCallback callback , String hosts) throws NumberFormatException, InterruptedException {
+			StringLocalCacheNotifyCallback callback , String hosts) throws NumberFormatException, InterruptedException {
 		StringLocalCacheData.getInstance().setCache(cache);
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
