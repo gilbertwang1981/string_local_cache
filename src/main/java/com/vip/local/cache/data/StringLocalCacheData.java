@@ -4,13 +4,13 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.LoadingCache;
 
-public class LocalCacheData {
+public class StringLocalCacheData {
 	private LoadingCache<String , String> cache = null;
-	private static LocalCacheData instance = null;
+	private static StringLocalCacheData instance = null;
 		
-	public static LocalCacheData getInstance(){
+	public static StringLocalCacheData getInstance(){
 		if (instance == null) {
-			instance = new LocalCacheData();
+			instance = new StringLocalCacheData();
 		}
 		return instance;
 	}

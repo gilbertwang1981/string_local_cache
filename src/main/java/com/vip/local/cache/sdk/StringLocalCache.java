@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.LoadingCache;
-import com.vip.local.cache.data.LocalCacheData;
+import com.vip.local.cache.data.StringLocalCacheData;
 import com.vip.local.cache.define.LocalCacheCmdType;
 import com.vip.local.cache.main.LocalCacheInitializer;
 import com.vip.local.cache.param.LocalCacheParameter;
@@ -24,13 +24,13 @@ public class StringLocalCache {
 	
 	public void initialize(LoadingCache<String , String> cache , 
 			LocalCacheNotifyCallback callback , String hosts) throws NumberFormatException, InterruptedException {
-		LocalCacheData.getInstance().setCache(cache);
+		StringLocalCacheData.getInstance().setCache(cache);
 		LocalCacheInitializer.getInstance().initialize(null , callback , hosts);
 	}
 	
 	public String get(String key , String defaultValue) {
 		try {
-			return LocalCacheData.getInstance().get(key);
+			return StringLocalCacheData.getInstance().get(key);
 		} catch (ExecutionException e) {
 			return defaultValue;
 		}

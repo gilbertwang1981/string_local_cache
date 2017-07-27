@@ -13,6 +13,6 @@ public class LocalCachePeerHandler extends SimpleChannelInboundHandler<CacheComm
      }
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, CacheCommand msg) throws Exception {	
+	protected void channelRead0(ChannelHandlerContext ctx, CacheCommand msg) throws Exception {
 	}
 }

@@ -51,7 +51,7 @@ public class LocalCacheCommandWorker extends Thread{
 					}
 				} 
 			} catch (Exception e) {
-				e.printStackTrace();
+				// nothing to do
 			}
 		}
 	}
