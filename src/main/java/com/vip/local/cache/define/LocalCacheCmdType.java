@@ -2,7 +2,7 @@ package com.vip.local.cache.define;
 
 public enum LocalCacheCmdType {
 	LOCAL_CACHE_CMD_TYPE_INV(-1 , "无效命令" , "inv"),
-	LOCAL_CACHE_CMD_TYPE_FLUSH(0 , "缓存刷新" , "flush"),
+	LOCAL_CACHE_CMD_TYPE_NOTIFY(0 , "缓存刷新" , "flush"),
 	LOCAL_CACHE_CMD_TYPE_SET(1 , "设置缓存" , "set"),
 	LOCAL_CACHE_CMD_TYPE_DEL(2 , "删除缓存" , "del"),
 	LOCAL_CACHE_CMD_TYPE_HB(3 , "心跳检测" , "healthcheck");

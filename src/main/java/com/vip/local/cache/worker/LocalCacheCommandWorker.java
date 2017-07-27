@@ -34,9 +34,9 @@ public class LocalCacheCommandWorker extends Thread{
 					continue;
 				}
 	
-				if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() == value.getCode()) {
+				if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode() == value.getCode()) {
 					if (!LocalCacheCommandMgr.getInstance().execute(
-							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , value)){
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode() , value)){
 						throw new Exception("execute failed," + value);
 					}
 				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() == value.getCode()) {

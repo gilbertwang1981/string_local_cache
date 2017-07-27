@@ -61,7 +61,7 @@ public class LocalCacheSdk {
 	
 	public void notify(String parameter) throws UnsupportedEncodingException {
 		LocalCacheParameter param = new LocalCacheParameter();
-		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+		param.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode());
 		
 		HashMap<String , Object> data = new HashMap<String , Object>();
 		

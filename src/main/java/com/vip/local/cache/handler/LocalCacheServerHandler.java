@@ -14,9 +14,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class LocalCacheServerHandler extends SimpleChannelInboundHandler<CacheCommand> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, CacheCommand msg) throws Exception {
-		if (msg.getMessageType() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()) {
+		if (msg.getMessageType() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode()) {
 			LocalCacheParameter command = new LocalCacheParameter();
-			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode());
 			
 			HashMap<String , Object> values = new HashMap<String , Object>();
 			values.put("cache_value" , msg.getParameter());
@@ -41,8 +41,6 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<CacheCo
 			values.put("cache_key", msg.getKey());
 			command.setParams(values);
 			LocalCacheCommandWorker.getInstance().addCommand(command);
-		} else if (msg.getMessageType() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_HB.getCode()){
-		}else {
 		}
 	}
 	

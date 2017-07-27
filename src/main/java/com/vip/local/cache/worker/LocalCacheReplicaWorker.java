@@ -52,7 +52,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 		List<String> params = LocalCacheUtil.tokenizer(hosts , ";");
 
 		Builder builder = CommonLocalCache.CacheCommand.newBuilder().setParameter(
-				parameter).setMessageType(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode());
+				parameter).setMessageType(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode());
 		
 		boolean ret = true;
 		for (String host : params) {
@@ -136,7 +136,7 @@ public final class LocalCacheReplicaWorker extends Thread{
 					continue;
 				}
 				
-				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode()){
+				if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode()){
 					this.notify((String)value.getParams().get("cache_value"));
 				} else if (value.getCode() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode()) {
 					this.delCache((String)value.getParams().get("cache_key"));

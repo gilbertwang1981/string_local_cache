@@ -26,7 +26,7 @@ public class LocalCacheCommandMgr {
 		
 		commands.put(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , 
 				new DelLocalCacheCommand());
-		commands.put(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_FLUSH.getCode() , 
+		commands.put(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_NOTIFY.getCode() , 
 				new FlushLocalCacheCommand(this.callback));
 		commands.put(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_SET.getCode() , 
 				new SetLocalCacheCommand());
