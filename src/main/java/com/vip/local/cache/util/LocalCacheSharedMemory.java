@@ -9,7 +9,7 @@ import java.nio.channels.FileChannel;
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
 
 public class LocalCacheSharedMemory {
-	private int totalRecored = 256;
+	private int totalRecored = 16;
 	private int pageFlag = 0;
 	private int writeOffset = 0;
 	private int writeCtr = 0;
@@ -49,10 +49,6 @@ public class LocalCacheSharedMemory {
 			this.writeCtr = mapBuffer.getInt();
 			this.readOffset = mapBuffer.getInt();
 			this.readCtr = mapBuffer.getInt();
-			
-			System.out.println("total record:" + this.totalRecored);
-			System.out.println("read record:" + this.readCtr);
-			System.out.println("write record:" + this.writeCtr);
 		} catch (Exception e) {
 			return false;
 		}
@@ -94,7 +90,7 @@ public class LocalCacheSharedMemory {
 		if (this.readCtr >= this.totalRecored) {
 			this.readCtr = 0;
 			this.readOffset = 0;
-			this.pageFlag = 1;
+			this.pageFlag = 0;
 		}
 		
 		mapBuffer.position(24 + this.readOffset);
