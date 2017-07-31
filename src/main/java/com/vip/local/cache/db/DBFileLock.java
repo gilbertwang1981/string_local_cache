@@ -1,4 +1,4 @@
-package com.vip.local.cache.util;
+package com.vip.local.cache.db;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
-public class LocalCacheFileLock {
+public class DBFileLock {
 	private FileChannel fileChannel = null;
 	private FileLock fileLock = null;
 	private FileOutputStream fileOutputStream = null;

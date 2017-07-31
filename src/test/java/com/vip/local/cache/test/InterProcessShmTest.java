@@ -1,43 +1,39 @@
 package com.vip.local.cache.test;
 
+import com.vip.local.cache.db.DBShm;
 import com.vip.local.cache.proto.SharedMemoryStruct;
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
-import com.vip.local.cache.util.LocalCacheSharedMemory;
-import com.vip.local.cache.util.LocalCacheShmHdr;
 
 import junit.framework.TestCase;
 
 public class InterProcessShmTest extends TestCase {
 	public void testProducer() throws Exception{
-		LocalCacheSharedMemory shm = new LocalCacheSharedMemory();
+		DBShm shm = new DBShm();
 		
-		shm.initialize("test1.shm");
+		shm.initialize();
 		
-		for (int i = 0;i < 60;i ++) {
+		for (int i = 0;i < 50000;i ++) {
 			SharedMemoryObject obj = SharedMemoryStruct.SharedMemoryObject.newBuilder().setIp("127.0.0.1")
 					.setKey("test-key").setValue("hello world" + i).setTimestamp(System.currentTimeMillis()).build();
 			shm.write(obj);
 			
-			Thread.sleep(1000);
+			if (i % 5000 == 0) {
+				Thread.sleep(100);
+			}
 		}
 		
-		shm.destroy();
+		shm.destory();
 	}
 
 	public void testConsumer() throws Exception {
-		LocalCacheSharedMemory shm = new LocalCacheSharedMemory();
+		DBShm shm = new DBShm();
 		
-		shm.initialize("test1.shm");
+		shm.initialize();
 		
 		while (true) {
 			SharedMemoryObject out = shm.read();
 			if (out == null) {
-				
-				LocalCacheShmHdr hdr = shm.getShmConfig();
-				System.out.println(hdr.getTotalRecord() + "/" + hdr.getReadCtr() + "/" + hdr.getWriteCtr() + "/" + hdr.getPages4Read() + "/" + hdr.getPages4Write() + 
-						"/" + hdr.getReadOffset() + "/" + hdr.getWriteOffset());
-				
-				Thread.sleep(3000);
+				Thread.sleep(500);
 				continue;
 			}
 			

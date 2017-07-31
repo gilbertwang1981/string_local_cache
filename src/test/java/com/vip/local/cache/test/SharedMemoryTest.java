@@ -1,16 +1,16 @@
 package com.vip.local.cache.test;
 
+import com.vip.local.cache.db.DBDataShm;
 import com.vip.local.cache.proto.SharedMemoryStruct;
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
-import com.vip.local.cache.util.LocalCacheSharedMemory;
 
 import junit.framework.TestCase;
 
 public class SharedMemoryTest extends TestCase {
 	public void testSharedMemory() throws Exception{
-		LocalCacheSharedMemory shm = new LocalCacheSharedMemory();
+		DBDataShm shm = new DBDataShm();
 		
-		shm.initialize("test0.shm");
+		shm.initialize("test0.shm" , "test0.lock");
 		
 		for (int i = 0;i < 5;i ++) {
 			SharedMemoryObject obj = SharedMemoryStruct.SharedMemoryObject.newBuilder().setIp("127.0.0.1")

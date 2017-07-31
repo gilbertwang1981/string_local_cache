@@ -2,13 +2,13 @@ package com.vip.local.cache.test;
 
 import java.lang.management.ManagementFactory;
 
-import com.vip.local.cache.util.LocalCacheFileLock;
+import com.vip.local.cache.db.DBFileLock;
 
 import junit.framework.TestCase;
 
 class Tester extends Thread {
 	
-	private LocalCacheFileLock localCacheFileLock = new LocalCacheFileLock();
+	private DBFileLock localCacheFileLock = new DBFileLock();
 	
 	public void run(){
 		while (true) {

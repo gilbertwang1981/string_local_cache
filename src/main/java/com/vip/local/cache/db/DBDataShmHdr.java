@@ -1,6 +1,6 @@
-package com.vip.local.cache.util;
+package com.vip.local.cache.db;
 
-public class LocalCacheShmHdr {
+public class DBDataShmHdr {
 	private int totalRecord;
 	private int pages4Write;
 	private int pages4Read;

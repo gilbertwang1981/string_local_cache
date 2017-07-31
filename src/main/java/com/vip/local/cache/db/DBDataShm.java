@@ -1,4 +1,4 @@
-package com.vip.local.cache.util;
+package com.vip.local.cache.db;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -7,8 +7,8 @@ import java.nio.channels.FileChannel;
 
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
 
-public class LocalCacheSharedMemory {
-	private int totalRecored = 1024;
+public class DBDataShm {
+	private int totalRecored = DBShmConst.DB_SHM_SIZE_IN_EACH_DB;
 	private int rPage = 0;
 	private int wPage = 0;
 	private int writeOffset = 0;
@@ -20,13 +20,13 @@ public class LocalCacheSharedMemory {
 	private FileChannel fileChannel = null;
 	private MappedByteBuffer mapBuffer = null;
 	
-	private LocalCacheFileLock localCacheFileLock = new LocalCacheFileLock();
+	private DBFileLock localCacheFileLock = new DBFileLock();
 	
-	private static final String LOCAL_CACHE_FILE_LOCK_NAME = "localcache.lock";
+	private String localCacheFileName = null;
 	
-	public LocalCacheShmHdr getShmConfig() throws Exception{
-		localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
-		LocalCacheShmHdr hdr = new LocalCacheShmHdr();
+	public DBDataShmHdr getShmConfig() throws Exception{
+		localCacheFileLock.lock(this.localCacheFileName);
+		DBDataShmHdr hdr = new DBDataShmHdr();
 		
 		if (mapBuffer == null) {
 			localCacheFileLock.unlock();
@@ -57,9 +57,12 @@ public class LocalCacheSharedMemory {
 		return hdr;
 	}
 	
-	public boolean initialize(String fileName) throws Exception {
+	public boolean initialize(String fileName , String lockFile) throws Exception {
+		
 		try {
-			localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
+			this.localCacheFileName = lockFile;
+			
+			localCacheFileLock.lock(this.localCacheFileName);
 			
 			boolean isNew = false;
 			File file = new File(fileName);
@@ -70,7 +73,7 @@ public class LocalCacheSharedMemory {
 			
 			fileChannel = ramFile.getChannel();
 			
-			mapBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE , 0 , totalRecored * 1024 * 10);
+			mapBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE , 0 , totalRecored * DBShmConst.DB_SHM_MAX_SIZE_IN_EACH_ELEM);
 			
 			if (isNew) {
 				mapBuffer.putInt(totalRecored);
@@ -82,15 +85,6 @@ public class LocalCacheSharedMemory {
 				mapBuffer.putInt(readCtr);
 			}
 			
-			mapBuffer.position(0);
-			this.totalRecored = mapBuffer.getInt();
-			this.wPage = mapBuffer.getInt();
-			this.rPage = mapBuffer.getInt();
-			this.writeOffset = mapBuffer.getInt();
-			this.writeCtr = mapBuffer.getInt();
-			this.readOffset = mapBuffer.getInt();
-			this.readCtr = mapBuffer.getInt();
-			
 			localCacheFileLock.unlock();
 		} catch (Exception e) {
 			localCacheFileLock.unlock();
@@ -101,7 +95,18 @@ public class LocalCacheSharedMemory {
 	}
 	
 	public boolean write(SharedMemoryObject obj) throws Exception {
-		localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
+		if (!localCacheFileLock.lock(this.localCacheFileName)){
+			return false;
+		}
+		
+		mapBuffer.position(0);
+		this.totalRecored = mapBuffer.getInt();
+		this.wPage = mapBuffer.getInt();
+		this.rPage = mapBuffer.getInt();
+		this.writeOffset = mapBuffer.getInt();
+		this.writeCtr = mapBuffer.getInt();
+		this.readOffset = mapBuffer.getInt();
+		this.readCtr = mapBuffer.getInt();
 		
 		byte [] in = obj.toBuilder().build().toByteArray();
 		
@@ -133,7 +138,9 @@ public class LocalCacheSharedMemory {
 	
 	public SharedMemoryObject read() throws Exception {
 		
-		localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
+		if (!localCacheFileLock.lock(this.localCacheFileName)){
+			return null;
+		}
 		
 		mapBuffer.position(0);
 		this.totalRecored = mapBuffer.getInt();
@@ -179,7 +186,7 @@ public class LocalCacheSharedMemory {
 	
 	public boolean destroy() throws Exception{
 		try {
-			localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
+			localCacheFileLock.lock(this.localCacheFileName);
 			
 			if (fileChannel != null) {
 				fileChannel.close();
