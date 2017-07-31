@@ -3,6 +3,7 @@ package com.vip.local.cache.test;
 import com.vip.local.cache.proto.SharedMemoryStruct;
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
 import com.vip.local.cache.util.LocalCacheSharedMemory;
+import com.vip.local.cache.util.LocalCacheShmHdr;
 
 import junit.framework.TestCase;
 
@@ -31,6 +32,11 @@ public class InterProcessShmTest extends TestCase {
 		while (true) {
 			SharedMemoryObject out = shm.read();
 			if (out == null) {
+				
+				LocalCacheShmHdr hdr = shm.getShmConfig();
+				System.out.println(hdr.getTotalRecord() + "/" + hdr.getReadCtr() + "/" + hdr.getWriteCtr() + "/" + hdr.getPages4Read() + "/" + hdr.getPages4Write() + 
+						"/" + hdr.getReadOffset() + "/" + hdr.getWriteOffset());
+				
 				Thread.sleep(3000);
 				continue;
 			}

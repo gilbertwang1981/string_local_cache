@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
 import com.vip.local.cache.proto.SharedMemoryStruct.SharedMemoryObject;
 
 public class LocalCacheSharedMemory {
-	private int totalRecored = 6;
+	private int totalRecored = 1024;
 	private int rPage = 0;
 	private int wPage = 0;
 	private int writeOffset = 0;
@@ -23,6 +23,39 @@ public class LocalCacheSharedMemory {
 	private LocalCacheFileLock localCacheFileLock = new LocalCacheFileLock();
 	
 	private static final String LOCAL_CACHE_FILE_LOCK_NAME = "localcache.lock";
+	
+	public LocalCacheShmHdr getShmConfig() throws Exception{
+		localCacheFileLock.lock(LOCAL_CACHE_FILE_LOCK_NAME);
+		LocalCacheShmHdr hdr = new LocalCacheShmHdr();
+		
+		if (mapBuffer == null) {
+			localCacheFileLock.unlock();
+			
+			return null;
+		}
+		
+		mapBuffer.position(0);
+		
+		this.totalRecored = mapBuffer.getInt();
+		this.wPage = mapBuffer.getInt();
+		this.rPage = mapBuffer.getInt();
+		this.writeOffset = mapBuffer.getInt();
+		this.writeCtr = mapBuffer.getInt();
+		this.readOffset = mapBuffer.getInt();
+		this.readCtr = mapBuffer.getInt();
+		
+		hdr.setPages4Read(this.rPage);
+		hdr.setPages4Write(this.wPage);
+		hdr.setReadCtr(this.readCtr);
+		hdr.setReadOffset(this.readOffset);
+		hdr.setTotalRecord(this.totalRecored);
+		hdr.setWriteCtr(this.writeCtr);
+		hdr.setWriteOffset(this.writeOffset);
+		
+		localCacheFileLock.unlock();
+		
+		return hdr;
+	}
 	
 	public boolean initialize(String fileName) throws Exception {
 		try {
@@ -112,8 +145,6 @@ public class LocalCacheSharedMemory {
 		this.readCtr = mapBuffer.getInt();
 		
 		if (this.rPage == this.wPage && this.readCtr == this.writeCtr) {
-			System.out.println("write ctr:" + this.writeCtr + " read ctr:" + this.readCtr);
-		
 			localCacheFileLock.unlock();
 			
 			return null;
