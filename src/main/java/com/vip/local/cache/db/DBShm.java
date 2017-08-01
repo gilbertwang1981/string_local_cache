@@ -43,20 +43,21 @@ public class DBShm {
 		}
 		
 		if (dataShm.getShmConfig().getReadCtr() >= DBShmConst.DB_SHM_SIZE_IN_EACH_DB) {
+			dataShm.destroy();
 			
 			if (index.getCurrentReadCtr() == index.getCurrentIndex()) {
 				return null;
 			}
 			
-			dataShm.destroy();
-			
-			dataShm = new DBDataShm();
-			
 			DBIndexShmHdr newHdr = new DBIndexShmHdr();
-			newHdr.setCurrentReadCtr(index.getCurrentReadCtr() + 1);
-			
+			if (index.getCurrentReadCtr() >= (index.getTotal() - 1)) {
+				newHdr.setCurrentReadCtr(0);
+			} else {
+				newHdr.setCurrentReadCtr(index.getCurrentReadCtr() + 1);
+			}
 			indexShm.setDbConfig4Read(newHdr);
 			
+			dataShm = new DBDataShm();
 			if (!dataShm.initialize("data." + newHdr.getCurrentReadCtr() + ".shm" , "data." + newHdr.getCurrentReadCtr() + ".lock")) {
 				return null;
 			}
@@ -78,14 +79,17 @@ public class DBShm {
 		if (dataShm.getShmConfig().getWriteCtr() >= DBShmConst.DB_SHM_SIZE_IN_EACH_DB) {
 			dataShm.destroy();
 			
-			dataShm = new DBDataShm();
-			
 			DBIndexShmHdr newHdr = new DBIndexShmHdr();
-			newHdr.setCurrentIndex(index.getCurrentIndex() + 1);
-			newHdr.setCurrentWriteCtr(index.getCurrentWriteCtr() + 1);
-			
+			if (index.getCurrentIndex() >= (index.getTotal() - 1)) {
+				newHdr.setCurrentIndex(0);
+				newHdr.setCurrentWriteCtr(0);
+			} else {
+				newHdr.setCurrentIndex(index.getCurrentIndex() + 1);
+				newHdr.setCurrentWriteCtr(index.getCurrentWriteCtr() + 1);
+			}			
 			indexShm.setDbConfig4Write(newHdr);
 			
+			dataShm = new DBDataShm();
 			if (!dataShm.initialize("data." + newHdr.getCurrentIndex() + ".shm" , "data." + newHdr.getCurrentIndex() + ".lock")) {
 				return false;
 			}

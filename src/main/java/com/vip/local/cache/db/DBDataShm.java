@@ -110,7 +110,7 @@ public class DBDataShm {
 		
 		byte [] in = obj.toBuilder().build().toByteArray();
 		
-		if (this.writeCtr >= this.totalRecored) {
+		if (this.writeCtr > this.totalRecored) {
 			this.wPage ++;
 			this.writeCtr = 0;
 			this.writeOffset = 0;
