@@ -6,5 +6,6 @@ message SharedMemoryObject {
 	string ip = 1;
 	string key = 2;
 	string value = 3;
-	uint64 timestamp = 4;	
+	uint64 timestamp = 4;
+	uint32 opType = 5;	
 }

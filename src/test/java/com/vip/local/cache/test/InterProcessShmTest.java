@@ -13,7 +13,7 @@ public class InterProcessShmTest extends TestCase {
 		shm.initialize();
 		
 		for (int i = 0;i < 100000;i ++) {
-			SharedMemoryObject obj = SharedMemoryStruct.SharedMemoryObject.newBuilder().setIp("127.0.0.1")
+			SharedMemoryObject obj = SharedMemoryStruct.SharedMemoryObject.newBuilder().setIp("127.0.0.1").setOpType(2)
 					.setKey("test-key").setValue("hello world" + i).setTimestamp(System.currentTimeMillis()).build();
 			shm.write(obj);
 			
@@ -37,7 +37,8 @@ public class InterProcessShmTest extends TestCase {
 				continue;
 			}
 			
-			System.out.println("output:" + out.getIp() + " " + out.getKey() + " " + out.getValue() + " " + out.getTimestamp());
+			System.out.println("output:" + out.getIp() + " " + out.getKey() 
+				+ " " + out.getValue() + " " + out.getTimestamp() + " " + out.getOpType());
 		}
 	}
 }
