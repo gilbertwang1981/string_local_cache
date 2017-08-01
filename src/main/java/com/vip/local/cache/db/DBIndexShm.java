@@ -19,6 +19,8 @@ public class DBIndexShm {
 	
 	private String localCacheFileName = null;
 	
+	private String path = null;
+	
 	public DBIndexShmHdr getDbConfig() throws Exception{
 		localCacheFileLock.lock(this.localCacheFileName);
 		DBIndexShmHdr hdr = new DBIndexShmHdr();
@@ -49,7 +51,12 @@ public class DBIndexShm {
 	public boolean initialize(String fileName , String lockFile) throws Exception {
 		
 		try {
-			this.localCacheFileName = lockFile;
+			path = System.getenv("DISTRIBUTED_STRING_LOCAL_CACHE_INDEX_PATH");
+			if (path == null) {
+				this.localCacheFileName = lockFile;
+			} else {
+				this.localCacheFileName = path + "/" + lockFile;
+			}
 			
 			localCacheFileLock.lock(this.localCacheFileName);
 			

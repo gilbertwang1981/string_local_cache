@@ -4,7 +4,7 @@
 
   <groupId>com.vip.local.cache</groupId>
   <artifactId>string_local_cache</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
   <name>string_local_cache</name>

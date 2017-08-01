@@ -24,6 +24,8 @@ public class DBDataShm {
 	
 	private String localCacheFileName = null;
 	
+	private String path = null;
+	
 	public DBDataShmHdr getShmConfig() throws Exception{
 		localCacheFileLock.lock(this.localCacheFileName);
 		DBDataShmHdr hdr = new DBDataShmHdr();
@@ -60,7 +62,12 @@ public class DBDataShm {
 	public boolean initialize(String fileName , String lockFile) throws Exception {
 		
 		try {
-			this.localCacheFileName = lockFile;
+			path = System.getenv("DISTRIBUTED_STRING_LOCAL_CACHE_DATA_PATH");
+			if (path == null) {
+				this.localCacheFileName = lockFile;
+			} else {
+				this.localCacheFileName = path + "/" + lockFile;
+			}
 			
 			localCacheFileLock.lock(this.localCacheFileName);
 			

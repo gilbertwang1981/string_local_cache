@@ -12,7 +12,7 @@ public class InterProcessShmTest extends TestCase {
 		
 		shm.initialize();
 		
-		for (int i = 0;i < 50000;i ++) {
+		for (int i = 0;i < 100000;i ++) {
 			SharedMemoryObject obj = SharedMemoryStruct.SharedMemoryObject.newBuilder().setIp("127.0.0.1")
 					.setKey("test-key").setValue("hello world" + i).setTimestamp(System.currentTimeMillis()).build();
 			shm.write(obj);
