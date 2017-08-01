@@ -80,7 +80,7 @@ public class DBShm {
 			dataShm.destroy();
 			
 			DBIndexShmHdr newHdr = new DBIndexShmHdr();
-			if (index.getCurrentIndex() >= (index.getTotal() - 1)) {
+			if (index.getCurrentIndex() >= (index.getTotal() - 1)) {	
 				newHdr.setCurrentIndex(0);
 				newHdr.setCurrentWriteCtr(0);
 			} else {
@@ -90,7 +90,8 @@ public class DBShm {
 			indexShm.setDbConfig4Write(newHdr);
 			
 			dataShm = new DBDataShm();
-			if (!dataShm.initialize("data." + newHdr.getCurrentIndex() + ".shm" , "data." + newHdr.getCurrentIndex() + ".lock")) {
+			if (!dataShm.initialize("data." + newHdr.getCurrentIndex() + ".shm" , 
+					"data." + newHdr.getCurrentIndex() + ".lock" , true)) {
 				return false;
 			}
 		}

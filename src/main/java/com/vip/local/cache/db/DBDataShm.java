@@ -60,6 +60,10 @@ public class DBDataShm {
 	}
 	
 	public boolean initialize(String fileName , String lockFile) throws Exception {
+		return this.initialize(fileName , lockFile , false);
+	}
+	
+	public boolean initialize(String fileName , String lockFile , boolean force) throws Exception {
 		
 		try {
 			path = System.getenv("DISTRIBUTED_STRING_LOCAL_CACHE_DATA_PATH");
@@ -73,7 +77,10 @@ public class DBDataShm {
 			
 			boolean isNew = false;
 			File file = new File(fileName);
-			if (!file.exists()) {
+			if (force) {
+				file.delete();
+				isNew = true;
+			} else if (!file.exists()) {
 				isNew = true;
 			}
 			ramFile = new RandomAccessFile(fileName , "rw");

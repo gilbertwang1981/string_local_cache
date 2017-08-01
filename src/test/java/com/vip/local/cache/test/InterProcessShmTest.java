@@ -17,7 +17,7 @@ public class InterProcessShmTest extends TestCase {
 					.setKey("test-key").setValue("hello world" + i).setTimestamp(System.currentTimeMillis()).build();
 			shm.write(obj);
 			
-			if (i % 5000 == 0) {
+			if (i % 10000 == 0) {
 				Thread.sleep(100);
 			}
 		}
