@@ -51,21 +51,24 @@ public class DBIndexShm {
 	public boolean initialize(String fileName , String lockFile) throws Exception {
 		
 		try {
+			String absolutedFileName = null;
 			path = System.getenv("DISTRIBUTED_STRING_LOCAL_CACHE_INDEX_PATH");
 			if (path == null) {
 				this.localCacheFileName = lockFile;
+				absolutedFileName = fileName;
 			} else {
 				this.localCacheFileName = path + "/" + lockFile;
+				absolutedFileName = path + "/" + fileName;
 			}
 			
 			localCacheFileLock.lock(this.localCacheFileName);
 			
 			boolean isNew = false;
-			File file = new File(fileName);
+			File file = new File(absolutedFileName);
 			if (!file.exists()) {
 				isNew = true;
 			}
-			ramFile = new RandomAccessFile(fileName , "rw");
+			ramFile = new RandomAccessFile(absolutedFileName , "rw");
 			
 			fileChannel = ramFile.getChannel();
 			
