@@ -105,19 +105,6 @@ public class DBIndexShm {
 		return true;
 	}
 	
-	public boolean setDbConfig4Read(DBIndexShmHdr obj) throws Exception {
-		if (!localCacheFileLock.lock(this.localCacheFileName)){
-			return false;
-		}
-		
-		mapBuffer.position(8);
-		mapBuffer.putInt(obj.getCurrentReadCtr());
-		
-		localCacheFileLock.unlock();
-		
-		return true;
-	}
-	
 	public boolean destroy() throws Exception{
 		try {
 			localCacheFileLock.lock(this.localCacheFileName);

@@ -32,40 +32,6 @@ public class DBShm {
 		return true;
 	}
 	
-	public SharedMemoryObject read() throws Exception{
-		DBIndexShmHdr index = indexShm.getDbConfig();
-		if (index == null) {
-			return null;
-		}
-		
-		if (dataShm == null) {
-			return null;
-		}
-		
-		if (dataShm.getShmConfig().getReadCtr() >= DBShmConst.DB_SHM_SIZE_IN_EACH_DB) {
-			dataShm.destroy();
-			
-			if (index.getCurrentReadCtr() == index.getCurrentIndex()) {
-				return null;
-			}
-			
-			DBIndexShmHdr newHdr = new DBIndexShmHdr();
-			if (index.getCurrentReadCtr() >= (index.getTotal() - 1)) {
-				newHdr.setCurrentReadCtr(0);
-			} else {
-				newHdr.setCurrentReadCtr(index.getCurrentReadCtr() + 1);
-			}
-			indexShm.setDbConfig4Read(newHdr);
-			
-			dataShm = new DBDataShm();
-			if (!dataShm.initialize("data." + newHdr.getCurrentReadCtr() + ".shm" , "data." + newHdr.getCurrentReadCtr() + ".lock")) {
-				return null;
-			}
-		}
-		
-		return dataShm.read();
-	}
-	
 	public boolean write(SharedMemoryObject obj) throws Exception {
 		DBIndexShmHdr index = indexShm.getDbConfig();
 		if (index == null) {
