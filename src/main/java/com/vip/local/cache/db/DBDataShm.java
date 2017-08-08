@@ -153,54 +153,6 @@ public class DBDataShm {
 		return true;
 	}
 	
-	public SharedMemoryObject read() throws Exception {
-		
-		if (!localCacheFileLock.lock(this.localCacheFileName)){
-			return null;
-		}
-		
-		mapBuffer.position(0);
-		this.totalRecored = mapBuffer.getInt();
-		this.wPage = mapBuffer.getInt();
-		this.rPage = mapBuffer.getInt();
-		this.writeOffset = mapBuffer.getInt();
-		this.writeCtr = mapBuffer.getInt();
-		this.readOffset = mapBuffer.getInt();
-		this.readCtr = mapBuffer.getInt();
-		
-		if (this.rPage == this.wPage && this.readCtr == this.writeCtr) {
-			localCacheFileLock.unlock();
-			
-			return null;
-		}
-		
-		if (this.rPage < this.wPage && this.readCtr == this.totalRecored) {
-				this.readCtr = 0;
-				this.readOffset = 0;
-				this.rPage ++;
-		}
-		
-		mapBuffer.position(28 + this.readOffset);
-		
-		int length = mapBuffer.getInt();
-		byte [] dst = new byte[length];
-		mapBuffer.get(dst, 0 , length);
-		
-		this.readCtr ++;
-		this.readOffset += dst.length + 4;
-		
-		mapBuffer.position(8);
-		mapBuffer.putInt(this.rPage);
-		
-		mapBuffer.position(20);
-		mapBuffer.putInt(this.readOffset);
-		mapBuffer.putInt(this.readCtr);
-		
-		localCacheFileLock.unlock();
-		
-		return SharedMemoryObject.parseFrom(dst);
-	}
-	
 	public boolean destroy() throws Exception{
 		try {
 			localCacheFileLock.lock(this.localCacheFileName);

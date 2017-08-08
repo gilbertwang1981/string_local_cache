@@ -17,14 +17,6 @@ public class SharedMemoryTest extends TestCase {
 					.setKey("test-key").setValue("hello world" + i).setTimestamp(System.currentTimeMillis()).build();
 			shm.write(obj);
 		}
-		
-		while (true) {
-			SharedMemoryObject out = shm.read();
-			if (out == null) {
-				break;
-			}
-			System.out.println("output:" + out.getIp() + " " + out.getKey() + " " + out.getValue() + " " + out.getTimestamp());
-		}
 			
 		shm.destroy();
 	}

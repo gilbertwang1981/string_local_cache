@@ -46,7 +46,7 @@ public class DBShm {
 			dataShm.destroy();
 			
 			DBIndexShmHdr newHdr = new DBIndexShmHdr();
-			if (index.getCurrentIndex() >= (index.getTotal() - 1)) {	
+			if (index.getCurrentIndex() == index.getTotal()) {	
 				newHdr.setCurrentIndex(0);
 				newHdr.setCurrentWriteCtr(0);
 			} else {
