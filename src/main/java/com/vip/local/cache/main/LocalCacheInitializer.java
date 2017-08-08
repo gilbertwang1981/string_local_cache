@@ -32,22 +32,16 @@ public class LocalCacheInitializer {
 		return instance;
 	}
 	
-	public void initialize(String port , StringLocalCacheNotifyCallback callback , 
-			String hosts) throws NumberFormatException, InterruptedException {
+	public void initialize(String port , StringLocalCacheNotifyCallback callback) 
+			throws NumberFormatException, InterruptedException {
 		if (StringUtils.isEmpty(port) || !StringUtils.isNumeric(port)) {
 			port = LocalCacheConst.LOCAL_CACHE_SERVER_PORT.getDefinition();
 		}
-		
-		LocalCacheClientInitializer.getInstance().initialize();
-		LocalCacheClientInitializer.getInstance().start();
 		
 		LocalCacheCommandWorker.getInstance().start();
 		
 		LocalCacheCommandMgr.getInstance().initialize(callback);
 
-		if (hosts != null) {
-			LocalCacheReplicaWorker.getInstance().setHosts(hosts);
-		}
 		LocalCacheReplicaWorker.getInstance().start();
 		
 		ServerBootstrap bootstrap = new ServerBootstrap();

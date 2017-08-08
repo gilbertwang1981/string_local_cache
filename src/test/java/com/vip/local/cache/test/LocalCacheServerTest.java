@@ -47,7 +47,7 @@ class Starter extends Thread {
 	public void run(){
 		try {
 			StringLocalCache.getInstance().initialize(cahceBuilder , 
-					new LocalCacheCallback() , "127.0.0.1;10.199.196.120");
+					new LocalCacheCallback());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
