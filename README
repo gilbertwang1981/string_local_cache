@@ -15,11 +15,10 @@ coding as following steps:
             
 2. initialize the string cache.
 	example:
-	StringLocalCache.getInstance().initialize(cahceBuilder , new LocalCacheCallback() , "127.0.0.1");
+	StringLocalCache.getInstance().initialize(cahceBuilder , new LocalCacheCallback());
 	Parameters:
 		1: loadingcache object which is created in the first step.
 		2: notification callback, such a flush cache event.
-		3: ip list in the cluster such as 127.0.0.1:192.168.145.235.
 		
 3. using the cache facilities.
 	example:
@@ -31,5 +30,5 @@ coding as following steps:
 		StringLocalCache.getInstance().get("1");
 	4. notify the events to other cache nodes.
 		StringLocalCache.getInstance().notify("event");
-		
-More details, please see the unit test.
+
+4. The Agent process is responsible for replicating the data.

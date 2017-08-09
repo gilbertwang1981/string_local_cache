@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 class LocalCacheCallback implements StringLocalCacheNotifyCallback {
 
 	public boolean onNotify(String param) {
-		System.out.println("no notify:" + param);
+		System.out.println("on notify:" + param);
 		
 		return true;
 	}
