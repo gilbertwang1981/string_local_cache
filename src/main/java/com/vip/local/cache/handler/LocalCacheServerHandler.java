@@ -41,7 +41,7 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<CacheCo
 			values.put("cache_key", msg.getKey());
 			command.setParams(values);
 			LocalCacheCommandWorker.getInstance().addCommand(command);
-		} else if (msg.getMessageType() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_ERROR.getCode()) {
+		} else if (msg.getMessageType() == LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_ERROR.getCode()) {			
 			LocalCacheParameter command = new LocalCacheParameter();
 			command.setCode(LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_ERROR.getCode());
 

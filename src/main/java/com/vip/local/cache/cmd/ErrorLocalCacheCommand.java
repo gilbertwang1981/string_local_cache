@@ -1,5 +1,6 @@
 package com.vip.local.cache.cmd;
 
+import com.google.protobuf.ByteString;
 import com.vip.local.cache.param.LocalCacheParameter;
 import com.vip.local.cache.sdk.StringLocalCacheErrorCallback;
 
@@ -12,8 +13,12 @@ public class ErrorLocalCacheCommand implements LocalCacheCommand {
 	}
 	
 	public boolean execute(LocalCacheParameter paramter) {
-		return callback.onError((String) paramter.getParams().get("cache_key") , 
-				(String) paramter.getParams().get("cache_value"));
+		try {
+			return callback.onError((String) paramter.getParams().get("cache_key") , 
+				((ByteString) paramter.getParams().get("cache_value")).toStringUtf8());
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }
