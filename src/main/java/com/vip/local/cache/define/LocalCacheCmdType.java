@@ -5,7 +5,7 @@ public enum LocalCacheCmdType {
 	LOCAL_CACHE_CMD_TYPE_NOTIFY(0 , "缓存刷新" , "flush"),
 	LOCAL_CACHE_CMD_TYPE_SET(1 , "设置缓存" , "set"),
 	LOCAL_CACHE_CMD_TYPE_DEL(2 , "删除缓存" , "del"),
-	LOCAL_CACHE_CMD_TYPE_HB(3 , "心跳检测" , "healthcheck");
+	LOCAL_CACHE_CMD_TYPE_ERROR(3 , "错误回调" , "error");
 	
 	private LocalCacheCmdType(int code , String desc , String command){
 		this.code = code;

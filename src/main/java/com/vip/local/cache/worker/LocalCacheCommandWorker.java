@@ -49,7 +49,12 @@ public class LocalCacheCommandWorker extends Thread{
 							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_DEL.getCode() , value)){
 						throw new Exception("execute failed," + value);
 					}
-				} 
+				} else if (LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_ERROR.getCode() == value.getCode()) {
+					if (!LocalCacheCommandMgr.getInstance().execute(
+							LocalCacheCmdType.LOCAL_CACHE_CMD_TYPE_ERROR.getCode() , value)){
+						throw new Exception("execute failed," + value);
+					}
+				}
 			} catch (Exception e) {
 				// nothing to do
 			}

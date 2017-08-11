@@ -23,9 +23,9 @@ public class StringLocalCache {
 	}
 	
 	public void initialize(LoadingCache<String , String> cache , 
-			StringLocalCacheNotifyCallback callback) throws NumberFormatException, InterruptedException {
+			StringLocalCacheNotifyCallback callback0 , StringLocalCacheErrorCallback callback1) throws NumberFormatException, InterruptedException {
 		StringLocalCacheData.getInstance().setCache(cache);
-		LocalCacheInitializer.getInstance().initialize(null , callback);
+		LocalCacheInitializer.getInstance().initialize(null , callback0 , callback1);
 	}
 	
 	public String get(String key , String defaultValue) {

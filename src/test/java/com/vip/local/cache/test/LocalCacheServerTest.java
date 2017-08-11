@@ -9,16 +9,27 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.vip.local.cache.sdk.StringLocalCacheNotifyCallback;
 import com.vip.local.cache.sdk.StringLocalCache;
+import com.vip.local.cache.sdk.StringLocalCacheErrorCallback;
 
 import junit.framework.TestCase;
 
-class LocalCacheCallback implements StringLocalCacheNotifyCallback {
+class LocalCacheNotifyCallback implements StringLocalCacheNotifyCallback {
 
 	public boolean onNotify(String param) {
 		System.out.println("on notify:" + param);
 		
 		return true;
 	}
+}
+
+class LocalCacheErrorCallback implements StringLocalCacheErrorCallback {
+
+	public boolean onError(String key, String value) {
+		System.out.println("on Error:" + key + "/" + value);
+		
+		return false;
+	}
+	
 }
 
 class Getter extends Thread {
@@ -47,7 +58,7 @@ class Starter extends Thread {
 	public void run(){
 		try {
 			StringLocalCache.getInstance().initialize(cahceBuilder , 
-					new LocalCacheCallback());
+					new LocalCacheNotifyCallback() , new LocalCacheErrorCallback());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
