@@ -48,6 +48,7 @@ public class LocalCacheServerHandler extends SimpleChannelInboundHandler<CacheCo
 			HashMap<String , Object> values = new HashMap<String , Object>();
 			values.put("cache_key", msg.getKey());
 			values.put("cache_value" , msg.getValue());
+			values.put("cache_param" , msg.getParameter());
 						
 			command.setParams(values);
 			LocalCacheCommandWorker.getInstance().addCommand(command);

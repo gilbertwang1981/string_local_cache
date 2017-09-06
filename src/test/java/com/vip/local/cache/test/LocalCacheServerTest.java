@@ -24,8 +24,8 @@ class LocalCacheNotifyCallback implements StringLocalCacheNotifyCallback {
 
 class LocalCacheErrorCallback implements StringLocalCacheErrorCallback {
 
-	public boolean onError(String key, String value) {
-		System.out.println("on Error:" + key + "/" + value);
+	public boolean onError(String nodeId , String key, String value) {
+		System.out.println("on Error:" + nodeId + "/" + key + "/" + value);
 		
 		return false;
 	}

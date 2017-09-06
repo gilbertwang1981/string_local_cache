@@ -14,8 +14,9 @@ public class ErrorLocalCacheCommand implements LocalCacheCommand {
 	
 	public boolean execute(LocalCacheParameter paramter) {
 		try {
-			return callback.onError((String) paramter.getParams().get("cache_key") , 
-				((ByteString) paramter.getParams().get("cache_value")).toStringUtf8());
+			return callback.onError((String) paramter.getParams().get("cache_param") , 
+					(String) paramter.getParams().get("cache_key") , 
+					((ByteString) paramter.getParams().get("cache_value")).toStringUtf8());
 		} catch (Exception e) {
 			return false;
 		}
