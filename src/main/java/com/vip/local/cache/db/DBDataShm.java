@@ -125,7 +125,18 @@ public class DBDataShm {
 		this.readOffset = mapBuffer.getInt();
 		this.readCtr = mapBuffer.getInt();
 		
+		if (this.totalRecored >= DBShmConst.DB_SHM_SIZE_IN_EACH_DB) {
+			localCacheFileLock.unlock();
+			
+			return false;
+		}
+		
 		byte [] in = obj.toBuilder().build().toByteArray();
+		if (in.length > DBShmConst.DB_SHM_MAX_SIZE_IN_EACH_ELEM) {
+			localCacheFileLock.unlock();
+			
+			return false;
+		}
 		
 		if (this.writeCtr > this.totalRecored) {
 			this.wPage ++;
